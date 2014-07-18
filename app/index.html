@@ -1,0 +1,51 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" manifest="phonepad.appcache"> <!--<![endif]-->
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Smash.js - Multiplayer Smash Bros like game in HTML5</title>
+  <meta name="description" content="Local Multiplayer Smash Bros like game in HTML5">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="shortcut icon" sizes="196x196" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114.png" />
+
+  <!-- build:css(.tmp) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+
+</head>
+
+<body>
+  <!--[if lt IE 10]>
+  <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <canvas id="viewport"></canvas>
+
+  <div id="gui"></div>
+
+  <!-- build:js scripts/vendor.js -->
+  <!-- bower:js -->
+  <script src="bower_components/modernizr/modernizr.js"></script>
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/peerjs/peer.js"></script>
+  <script src="bower_components/phonepad.js/dist/phonepad.js"></script>
+  <script src="bower_components/PhysicsJS/dist/physicsjs-full-0.6.0.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js({app,.tmp}) scripts/main.js -->
+  <script src="scripts/main.js"></script>
+  <!-- endbuild -->
+
+  <script src="http://warnode.com:7070/socket.io/socket.io.js"></script>
+
+</body>
+</html>
