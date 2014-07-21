@@ -18,6 +18,7 @@
 
   <!-- build:css(.tmp) styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/background.css">
   <!-- endbuild -->
 
 </head>
@@ -26,6 +27,18 @@
   <!--[if lt IE 10]>
   <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
+
+  <div id="background">
+    <div class="cloud staticCloud s1"></div>
+    <div class="cloud staticCloud s2"></div>
+    <div class="cloud staticCloud s3"></div>
+    <div class="cloud staticCloud s4"></div>
+    <div class="cloud x1"></div>
+    <div class="cloud x2"></div>
+    <div class="cloud x3"></div>
+    <div class="cloud x4"></div>
+    <div class="cloud x5"></div>
+  </div>
 
   <canvas id="viewport"></canvas>
 
@@ -41,7 +54,9 @@
   <!-- endbower -->
   <!-- endbuild -->
 
-  <!-- build:js({app,.tmp}) scripts/main.js -->
+  <!-- build:js({app,.tmp}) scripts/game.js -->
+  <script src="scripts/models/decor.js"></script>
+  <script src="scripts/models/player.js"></script>
   <script src="scripts/main.js"></script>
   <!-- endbuild -->
 

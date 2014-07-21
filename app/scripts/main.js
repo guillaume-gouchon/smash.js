@@ -16,9 +16,9 @@ $(function() {
 		// setup viewport
 		var viewportElement = $('#viewport');
 		var viewport = {
-	    el: viewportElement[0].id,
-	    width: viewportElement.width(),
-	    height: viewportElement.height()
+	    el: 'viewport',
+	    width: window.innerWidth,
+	    height: window.innerHeight
 		};
 
 		// setup renderer
@@ -26,39 +26,16 @@ $(function() {
 		world.add(renderer);
 
 		// subscribe to ticker to advance the simulation
-		Physics.util.ticker.on(function(time, dt){
+		Physics.util.ticker.on(function (time, dt) {
 	    world.step(time);
 		});
 		Physics.util.ticker.start();
 
 		// game loop
-		world.on('step', function (){
+		world.on('step', function () {
 	    world.render();
 		});
 
-		var square = Physics.body('rectangle', {
-	    x: 250,
-	    y: 250,
-	    vx: 0.01,
-	    width: 50,
-	    height: 50
-		});
-		gameElements.push(square);
-		world.add(square);
-
-
-		// add gravity
-		var gravity = Physics.behavior('constant-acceleration', {
-    	acc: { x: 0, y: 0.0004 }
-    }).applyTo(gameElements);
-    world.add(gravity);
-
-		// add game bounds
-		var bounds = Physics.aabb(0, 0, viewport.width, viewport.height);
-		world.add( Physics.behavior('edge-collision-detection', {
-	    aabb: bounds,
-	    restitution: 0.
-1		}) );
 		// ensure objects bounce when edge collision is detected
 		world.add(Physics.behavior('body-impulse-response'));
 
@@ -66,7 +43,110 @@ $(function() {
 		world.add(Physics.behavior('body-collision-detection'));
 		world.add(Physics.behavior('sweep-prune'));
 
+		// add gravity
+		var gravity = Physics.behavior('constant-acceleration', {
+    	acc: { x: 0, y: 0.0004 }
+    });
+    world.add(gravity);
 
+		addMovingPlatform(world, viewport.width / 2, viewport.height / 2 - 120, 200, 20);
+		addBridge(world, viewport.width / 2 - 200, viewport.height / 2, 200, 30);
+		addBridge(world, viewport.width / 2 + 200, viewport.height / 2, 200, 30);
+		addPlatform(world, viewport.width / 2, viewport.height / 2 + 170, 700, 100);
+
+		// Physics.integrator('my-integrator', function( parent ){
+
+		//     return {
+
+		//         integrateVelocities: function( bodies, dt ){
+		//         	console.log(bodies)
+		//             // update the velocities of all bodies according to timestep dt
+		//             // store previous velocities in .state.old.vel
+		//             // and .state.old.angular.vel
+		//         },
+
+		//         integratePositions: function( bodies, dt ){
+		//         	console.log(bodies)
+
+		//             // update the positions of all bodies according to timestep dt
+		//             // store the previous positions in .state.old.pos
+		//             // and .state.old.angular.pos
+		//             // also set the accelerations to zero
+		//         }
+		//     };
+		// });
+		// var i = Physics.integrator('my-integrator');
+		// i.setWorld(world);
+
+		
+
+
+		// resize events
+	  window.addEventListener('resize', function () {
+	      renderer.el.width = window.innerWidth;
+	      renderer.el.height = window.innerHeight;
+	  }, true);
+
+
+		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+	});
+
+	function addBridge(world, x, y, w, h) {
+		var decor = Physics.body('bridge', {
+	    x: x,
+	    y: y,
+	    width: w,
+	    height: h
+	  });
+		world.add(decor);
+	}
+
+	function addPlatform(world, x, y, w, h) {
+		var decor = Physics.body('platform', {
+	    x: x,
+	    y: y,
+	    width: w,
+	    height: h
+	  });
+		world.add(decor);
+	}
+
+	function addMovingPlatform(world, x, y, w, h) {
+		var decor = Physics.body('movingPlatform', {
+	    x: x,
+	    y: y,
+	    width: w,
+	    height: h
+	  });
+		world.add(decor);
+	}
+
+	function addPlayer(world, x, y, id) {
+		var player = Physics.body('player', {
+	    // default config options
+	    x: x,
+	    y: y,
+	    id: id
+	  });
+		gameElements.push(player);
+		world.add(player);
+	}
+
+	$(window).keydown(function (e) {
+		switch (e.keyCode) {
+			case 65: 
+				gameElements[0].moveLeft();
+				break;
+			case 68: 
+				gameElements[0].moveRight();
+				break;
+			case 83:
+				gameElements[0].punch(); 
+				break;
+		}
 	});
 
 });
