@@ -29,10 +29,15 @@
   <![endif]-->
 
   <div id="background">
-    <div class="cloud staticCloud s1"></div>
-    <div class="cloud staticCloud s2"></div>
-    <div class="cloud staticCloud s3"></div>
-    <div class="cloud staticCloud s4"></div>
+    <img class="mountains" src="images/mountains.png"/>
+
+    <div class="bouncing">
+      <div class="cloud staticCloud s1"></div>
+      <div class="cloud staticCloud s2"></div>
+      <div class="cloud staticCloud s3"></div>
+      <div class="cloud staticCloud s4"></div>
+    </div>
+    
     <div class="cloud x1"></div>
     <div class="cloud x2"></div>
     <div class="cloud x3"></div>
@@ -55,13 +60,14 @@
   <!-- endbuild -->
 
   <!-- build:js({app,.tmp}) scripts/game.js -->
+  <script src="scripts/models/bomb.js"></script>
   <script src="scripts/models/box.js"></script>
   <script src="scripts/models/decor.js"></script>
   <script src="scripts/models/player.js"></script>
   <script src="scripts/main.js"></script>
   <!-- endbuild -->
 
-  <script src="http://warnode.com:7070/socket.io/socket.io.js"></script>
+  <!-- // <script src="http://warnode.com:7070/socket.io/socket.io.js"></script> -->
 
 </body>
 </html>

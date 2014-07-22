@@ -5,16 +5,21 @@
 Physics.body('decor', 'convex-polygon', function (parent) {
 
   return {
+    
     init: function (options) {
-      options.treatment = options.treatment || 'static';
-      options.styles = {
-        restitution: 0.2,
-       	lineWidth: 10,
-      	strokeStyle: 'rgba(30, 170, 30, 0.8)',
-      	fillStyle: 'rgba(90, 61, 8, 0.8)'
+
+      var defaults = {
+        gameType: 'decor',
+        treatment: options.treatment || 'static',
+        styles: {
+          restitution: 0.2,
+         	lineWidth: 10,
+        	strokeStyle: 'rgba(30, 170, 30, 0.8)',
+        	fillStyle: 'rgba(90, 61, 8, 0.8)'
+        }
       };
 
-      parent.init.call(this, options);
+      parent.init.call(this, $.extend({}, defaults, options));
     },
   };
   
@@ -27,6 +32,7 @@ Physics.body('decor', 'convex-polygon', function (parent) {
 Physics.body('bridge', 'decor', function (parent) {
 
   return {
+
     init: function (options) {
       options.vertices = [
         {x: 0, y: 0},
@@ -34,7 +40,11 @@ Physics.body('bridge', 'decor', function (parent) {
         {x: options.width - options.height, y: options.height},
         {x: options.height, y: options.height}
     	];
+
       parent.init.call(this, options);
+
+      this.view = new Image();
+      this.view.src = "images/platform.png";
     },
   };
   
@@ -47,6 +57,7 @@ Physics.body('bridge', 'decor', function (parent) {
 Physics.body('platform', 'decor', function (parent) {
 
   return {
+
     init: function (options) {
       options.vertices = [
         {x: 0, y: 0},
@@ -54,7 +65,11 @@ Physics.body('platform', 'decor', function (parent) {
         {x: options.width - 40, y: options.height},
         {x: 40, y: options.height}
     	];
+
       parent.init.call(this, options);
+
+      this.view = new Image();
+      this.view.src = "images/base.png";
     },
   };
   
@@ -64,11 +79,12 @@ Physics.body('platform', 'decor', function (parent) {
 /**
 * MOVING PLATFORM
 */
-Physics.body('movingPlatform', 'platform', function (parent) {
+Physics.body('movingPlatform', 'bridge', function (parent) {
 
   var iX, iY;// initial positions
 
   return {
+
     init: function (options) {
       options.treatment = 'kinematic';
       iX = options.x;
@@ -76,14 +92,15 @@ Physics.body('movingPlatform', 'platform', function (parent) {
 
       parent.init.call(this, options);
 
+      this.view = new Image();
+      this.view.src = "images/platform.png";
+
       // initiate movement
       if (this.orientation == 0) {
         this.state.vel.x = this.speed;
       } else if (this.orientation == 1) {
         this.state.vel.y = this.speed;
-      }
-
-      
+      }     
     },
 
     move: function () {
@@ -112,6 +129,7 @@ Physics.body('movingPlatform', 'platform', function (parent) {
 Physics.behavior('platform-moving', function (parent) {
 
   return {
+
     init: function (options) {
       parent.init.call(this, options);
       this.platform = options.platform;

@@ -1,12 +1,12 @@
 $(function() {
 
-	var phonepad = Phonepad.getInstance();
-	phonepad.on('connected', function (gameId) { });
-	phonepad.on('padNotSupported', function (gamepadType) { });
-	phonepad.on('playerConnected', function (playerId, gamepadType) { });
-	phonepad.on('playerDisconnected', function (playerId) { });
-	phonepad.on('commandsReceived', function (commands) { });
-	phonepad.start();
+	// var phonepad = Phonepad.getInstance();
+	// phonepad.on('connected', function (gameId) { });
+	// phonepad.on('padNotSupported', function (gamepadType) { });
+	// phonepad.on('playerConnected', function (playerId, gamepadType) { });
+	// phonepad.on('playerDisconnected', function (playerId) { });
+	// phonepad.on('commandsReceived', function (commands) { });
+	// phonepad.start();
 
 
 	var players = [];
@@ -51,10 +51,10 @@ $(function() {
     });
     world.add(gravity);
 
-		addMovingPlatform(world, viewport.width / 2, viewport.height / 2 - 120, 200, 20);
-		addBridge(world, viewport.width / 2 - 200, viewport.height / 2, 200, 30);
-		addBridge(world, viewport.width / 2 + 200, viewport.height / 2, 200, 30);
-		addPlatform(world, viewport.width / 2, viewport.height / 2 + 170, 700, 100);
+		addMovingPlatform(world, viewport.width / 2, viewport.height / 2 -125, 200, 50);
+		addBridge(world, viewport.width / 2 - 200, viewport.height / 2, 200, 50);
+		addBridge(world, viewport.width / 2 + 200, viewport.height / 2, 200, 50);
+		addPlatform(world, viewport.width / 2, viewport.height / 2 + 195, 700, 140);
 
 		// resize events
 	  window.addEventListener('resize', function () {
@@ -63,9 +63,9 @@ $(function() {
 	  }, true);
 
 		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
-		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
-		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
-		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 	});
 
 	function addBridge(world, x, y, w, h) {
@@ -125,16 +125,32 @@ $(function() {
 		}
 	}
 
-	$(window).keydown(function (e) {
-		switch (e.keyCode) {
+	$(window).keydown(function (event) {
+		switch (event.keyCode) {
 			case 65: 
 				players[0].moveLeft();
 				break;
 			case 68: 
 				players[0].moveRight();
 				break;
+			case 87:
+				players[0].jump(); 
+				break;
 			case 83:
-				players[0].punch(); 
+				players[0].chargeAttack(); 
+				break;
+		}
+	});
+	$(window).keyup(function (event) {
+		switch (event.keyCode) {
+			case 65:
+				players[0].stopLeft();
+				break;
+			case 68:
+				players[0].stopRight();
+				break;
+			case 83:
+				players[0].attack(); 
 				break;
 		}
 	});
