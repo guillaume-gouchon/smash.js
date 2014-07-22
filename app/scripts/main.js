@@ -9,7 +9,7 @@ $(function() {
 	phonepad.start();
 
 
-	var gameElements = [];
+	var players = [];
 
 	Physics(function(world) {
 
@@ -33,6 +33,8 @@ $(function() {
 
 		// game loop
 		world.on('step', function () {
+			popBox(world);
+
 	    world.render();
 		});
 
@@ -54,39 +56,11 @@ $(function() {
 		addBridge(world, viewport.width / 2 + 200, viewport.height / 2, 200, 30);
 		addPlatform(world, viewport.width / 2, viewport.height / 2 + 170, 700, 100);
 
-		// Physics.integrator('my-integrator', function( parent ){
-
-		//     return {
-
-		//         integrateVelocities: function( bodies, dt ){
-		//         	console.log(bodies)
-		//             // update the velocities of all bodies according to timestep dt
-		//             // store previous velocities in .state.old.vel
-		//             // and .state.old.angular.vel
-		//         },
-
-		//         integratePositions: function( bodies, dt ){
-		//         	console.log(bodies)
-
-		//             // update the positions of all bodies according to timestep dt
-		//             // store the previous positions in .state.old.pos
-		//             // and .state.old.angular.pos
-		//             // also set the accelerations to zero
-		//         }
-		//     };
-		// });
-		// var i = Physics.integrator('my-integrator');
-		// i.setWorld(world);
-
-		
-
-
 		// resize events
 	  window.addEventListener('resize', function () {
 	      renderer.el.width = window.innerWidth;
 	      renderer.el.height = window.innerHeight;
 	  }, true);
-
 
 		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
@@ -95,56 +69,72 @@ $(function() {
 	});
 
 	function addBridge(world, x, y, w, h) {
-		var decor = Physics.body('bridge', {
+		var element = Physics.body('bridge', {
 	    x: x,
 	    y: y,
 	    width: w,
 	    height: h
 	  });
-		world.add(decor);
+		world.add(element);
 	}
 
 	function addPlatform(world, x, y, w, h) {
-		var decor = Physics.body('platform', {
+		var element = Physics.body('platform', {
 	    x: x,
 	    y: y,
 	    width: w,
 	    height: h
 	  });
-		world.add(decor);
+		world.add(element);
 	}
 
 	function addMovingPlatform(world, x, y, w, h) {
-		var decor = Physics.body('movingPlatform', {
+		var element = Physics.body('movingPlatform', {
 	    x: x,
 	    y: y,
 	    width: w,
-	    height: h
+	    height: h,
+	    min: -100,
+	    max: 100,
+	    orientation: 0,
+	    speed: 0.07
 	  });
-		world.add(decor);
+		var movingPlatformBehaviour = Physics.behavior('platform-moving', { platform: element });
+    world.add([element, movingPlatformBehaviour]);
 	}
 
 	function addPlayer(world, x, y, id) {
 		var player = Physics.body('player', {
-	    // default config options
 	    x: x,
 	    y: y,
 	    id: id
 	  });
-		gameElements.push(player);
-		world.add(player);
+		players.push(player);
+	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
+		world.add([player, playerBehavior]);
+	}
+
+	function popBox(world) {
+		if (Math.random() < 0.011) {
+			console.log('pop box !');
+			var element = Physics.body('box', {
+		    x: (viewport.width + 600 * (2 * Math.random() - 1)) / 2,
+		    y: 0
+		  });
+			world.add(element);
+		}
 	}
 
 	$(window).keydown(function (e) {
 		switch (e.keyCode) {
 			case 65: 
-				gameElements[0].moveLeft();
+				players[0].moveLeft();
 				break;
 			case 68: 
-				gameElements[0].moveRight();
+				players[0].moveRight();
 				break;
 			case 83:
-				gameElements[0].punch(); 
+				players[0].punch(); 
 				break;
 		}
 	});

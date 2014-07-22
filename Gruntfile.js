@@ -366,7 +366,7 @@ module.exports = function (grunt) {
           authKey: 'key1'
         },
         src: '<%= yeoman.dist %>',
-        dest: '/phonepad',
+        dest: '/smash',
         exclusions: []
       }
     },
@@ -376,7 +376,7 @@ module.exports = function (grunt) {
         basePath: '<%= yeoman.dist %>/'
       },
       all: {
-        dest: '<%= yeoman.dist %>/phonepad.appcache',
+        dest: '<%= yeoman.dist %>/smash.appcache',
         cache: '<%= yeoman.dist %>/**/*',
         network: '*'
       }
