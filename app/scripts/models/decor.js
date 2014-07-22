@@ -77,9 +77,9 @@ Physics.body('platform', 'decor', function (parent) {
 
 
 /**
-* MOVING PLATFORM
+* MOVING BRIDGE
 */
-Physics.body('movingPlatform', 'bridge', function (parent) {
+Physics.body('movingBridge', 'bridge', function (parent) {
 
   var iX, iY;// initial positions
 

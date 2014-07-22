@@ -4,10 +4,11 @@
 */
 Physics.body('player', 'rectangle', function (parent) {
 
+  var START_LIFE = 3;
+  var INITIAL_MASS = 1.0;
+
   var isGoingRight = false, isGoingLeft = false, orientation = 1;
   var currentJump = 0, currentBomb = 0;
-
-  var thresholdMove = 1;
 
   var speed = 0.2;
   var nbJumps = 2;
@@ -18,16 +19,21 @@ Physics.body('player', 'rectangle', function (parent) {
   return {
 
    init: function (options) {
+      var startPosition = this.getStartPosition();
       var defaults = {
         gameType: 'player',
         restitution: 0.2,
         cof: 0.3,
         height: 30,
         width: 30,
-        mass: 1.0
+        mass: INITIAL_MASS,
+        x: startPosition.x,
+        y: startPosition.y
       };
 
       parent.init.call(this, $.extend({}, defaults, options));
+
+      this.life = START_LIFE;
 
       this.view = new Image();
       this.view.src = "images/character.png";
@@ -114,6 +120,25 @@ Physics.body('player', 'rectangle', function (parent) {
       // TODO : add item animation
       // add item to player
     },
+
+    getStartPosition: function () {
+      return {
+        x: (viewport.width + 500 * (2 * Math.random() - 1)) / 2,
+        y: Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105
+      };
+    },
+
+    die: function () {
+      this.life--;
+      this.mass = INITIAL_MASS;
+      currentJump = 0;
+      currentBomb = 0;
+      var _this = this;
+      setTimeout(function () {
+        var startPosition = _this.getStartPosition();
+        _this.state.pos.set(startPosition.x, startPosition.y);
+      }, 1000);
+    },
   };
 
 });
@@ -164,14 +189,15 @@ Physics.behavior('player-behavior', function (parent) {
             player.openBox(element);
           } else if (element.gameType == 'player' || element.gameType == 'decor') {
             // reset jump
-            if (col.norm.y > 0.5) {
+            if (col.norm.y > 0) {
               player.resetJump();
             }
           } else if (element.gameType == 'explosion') {
             // take damage
             player.mass *= element.power;
-            console.log(player.mass)
             player.recalc();
+          } else if (element.gameType == 'border') {
+            player.die();
           }
         }
       }

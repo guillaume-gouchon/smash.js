@@ -51,7 +51,7 @@ $(function() {
     });
     world.add(gravity);
 
-		addMovingPlatform(world, viewport.width / 2, viewport.height / 2 -125, 200, 50);
+		addMovingBridge(world, viewport.width / 2, viewport.height / 2 -125, 200, 50);
 		addBridge(world, viewport.width / 2 - 200, viewport.height / 2, 200, 50);
 		addBridge(world, viewport.width / 2 + 200, viewport.height / 2, 200, 50);
 		addPlatform(world, viewport.width / 2, viewport.height / 2 + 195, 700, 140);
@@ -62,7 +62,7 @@ $(function() {
 	      renderer.el.height = window.innerHeight;
 	  }, true);
 
-		addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		addPlayer(world, 'sdfsdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
@@ -88,8 +88,8 @@ $(function() {
 		world.add(element);
 	}
 
-	function addMovingPlatform(world, x, y, w, h) {
-		var element = Physics.body('movingPlatform', {
+	function addMovingBridge(world, x, y, w, h) {
+		var element = Physics.body('movingBridge', {
 	    x: x,
 	    y: y,
 	    width: w,
@@ -103,10 +103,8 @@ $(function() {
     world.add([element, movingPlatformBehaviour]);
 	}
 
-	function addPlayer(world, x, y, id) {
+	function addPlayer(world, id) {
 		var player = Physics.body('player', {
-	    x: x,
-	    y: y,
 	    id: id
 	  });
 		players.push(player);
@@ -115,8 +113,7 @@ $(function() {
 	}
 
 	function popBox(world) {
-		if (Math.random() < 0.011) {
-			console.log('pop box !');
+		if (Math.random() < 0.003) {
 			var element = Physics.body('box', {
 		    x: (viewport.width + 600 * (2 * Math.random() - 1)) / 2,
 		    y: 0
