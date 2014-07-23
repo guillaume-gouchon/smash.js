@@ -10,13 +10,7 @@ Physics.body('decor', 'convex-polygon', function (parent) {
 
       var defaults = {
         gameType: 'decor',
-        treatment: options.treatment || 'static',
-        styles: {
-          restitution: 0.2,
-         	lineWidth: 10,
-        	strokeStyle: 'rgba(30, 170, 30, 0.8)',
-        	fillStyle: 'rgba(90, 61, 8, 0.8)'
-        }
+        treatment: options.treatment || 'static'
       };
 
       parent.init.call(this, $.extend({}, defaults, options));

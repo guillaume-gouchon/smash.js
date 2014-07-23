@@ -20,7 +20,7 @@ Physics.body('bomb', 'circle', function (parent) {
       parent.init.call(this, $.extend({}, defaults, options));
 
       this.duration = 800;
-      this.power = 0.6;
+      this.power = 1.2;
 
       // this.view = new Image();
       // this.view.src = "images/bomb.png";
@@ -28,6 +28,9 @@ Physics.body('bomb', 'circle', function (parent) {
 
     explode: function () {
       var world = this._world;
+      if (!world) {
+        return;
+      }
       var pos = this.state.pos;
       var n = 15;
       var r = 6;
@@ -58,10 +61,12 @@ Physics.body('bomb', 'circle', function (parent) {
       }
 
       setTimeout(function() {
-          for (var i = 0, l = debris.length; i < l; ++i){
+        if (world && debris) {
+          for (var i = 0, l = debris.length; i < l; ++i) {
             world.removeBody(debris[i]);
           }
           debris = undefined;
+        }
       }, 500);
 
       world.add(debris);

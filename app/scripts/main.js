@@ -11,7 +11,7 @@ $(function() {
 
 	var players = [];
 
-	Physics(function(world) {
+	Physics(function (world) {
 
 		// setup viewport
 		var viewportElement = $('#viewport');
@@ -37,6 +37,12 @@ $(function() {
 
 	    world.render();
 		});
+
+		// add borders
+  	var viewportBounds = Physics.aabb(0, -100, viewport.width, viewport.height + 200);
+	  world.add(Physics.behavior('border-behaviour', {
+	      aabb: viewportBounds
+	  }));
 
 		// ensure objects bounce when edge collision is detected
 		world.add(Physics.behavior('body-impulse-response'));
@@ -105,11 +111,13 @@ $(function() {
 
 	function addPlayer(world, id) {
 		var player = Physics.body('player', {
-	    id: id
+	    id: id,
+	    team: players.length % 4
 	  });
 		players.push(player);
 	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
 		world.add([player, playerBehavior]);
+		GUI.addPlayer(player);
 	}
 
 	function popBox(world) {
@@ -151,5 +159,9 @@ $(function() {
 				break;
 		}
 	});
+
+	function startGame() {
+		GUI.showRoundStart();
+	}
 
 });

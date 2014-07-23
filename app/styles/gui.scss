@@ -1,0 +1,130 @@
+#gui {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 10;
+	user-select: none;
+	font-family: 'myFont';
+}
+
+#players {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.2);
+	padding: 8px;
+
+	.player {
+		line-height: 30px;
+		text-align: left;
+		@extend .easeTransition;
+
+		&.defeat {
+			@extend .invisible;
+		}
+
+		strong {
+			display: inline-block;
+			margin-left: 10px;
+			font-size: 1.0em;
+			text-shadow: 0px 1px black;
+			@extend .easeTransition;
+		}
+
+		.name {
+			width: 170px;
+		}
+
+		.mass {
+			margin-right: 3px;
+
+			&.lowest {
+				color: red;
+			}
+
+			&.low {
+				color: orange;
+			}
+
+			&.medium {
+				color: yellow;
+			}
+
+			&.high {
+				color: green;
+			}
+		}
+
+		img {
+			display: inline-block;
+			height: 30px;
+			width: 30px;
+			vertical-align: middle;
+			@extend .easeTransition;
+		}
+	}
+
+	.invisible {
+		opacity: 0.3;
+	}
+
+	.easeTransition {
+	  transition: all 500ms;
+	}
+}
+
+#message {
+	position: absolute;
+	top: 45%;
+	width: 100%;
+	text-align: center;
+	z-index: 1000;
+	font-size: 4.5em;
+	opacity: 1.0;
+	color: #33a;
+	text-shadow: 2px 6px #ddd;
+	transform: scale(0);
+	transition: all 1s;
+
+	&.grow {
+		transform: scale(1.0);
+	}
+
+}
+
+#victory {
+	position: absolute;
+	top: 45%;
+	width: 100%;
+	text-align: center;
+	z-index: 1000;
+	font-size: 4.5em;
+	opacity: 1.0;
+	color: #33a;
+	text-shadow: 2px 6px #ddd;
+	transition: all 1s;
+
+	span {
+		animation: bounce 0.4s alternate infinite;
+	}
+}
+
+.red {
+	color: red!important;
+}
+
+.green {
+	color: green!important;
+}
+
+.blue {
+	color: blue!important;
+}
+
+.yellow {
+	color: yellow!important;
+}
+
+

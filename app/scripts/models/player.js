@@ -6,6 +6,9 @@ Physics.body('player', 'rectangle', function (parent) {
 
   var START_LIFE = 3;
   var INITIAL_MASS = 1.0;
+  var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
+            'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
+            'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
 
   var isGoingRight = false, isGoingLeft = false, orientation = 1;
   var currentJump = 0, currentBomb = 0;
@@ -15,6 +18,10 @@ Physics.body('player', 'rectangle', function (parent) {
   var jumpSkill = 0.25;
   var nbBombs = 1;
   var chargeAttack = -1;
+
+  function getRandomName() {
+    return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
+  }
 
   return {
 
@@ -34,6 +41,7 @@ Physics.body('player', 'rectangle', function (parent) {
       parent.init.call(this, $.extend({}, defaults, options));
 
       this.life = START_LIFE;
+      this.name = getRandomName();
 
       this.view = new Image();
       this.view.src = "images/character.png";
@@ -128,16 +136,51 @@ Physics.body('player', 'rectangle', function (parent) {
       };
     },
 
-    die: function () {
-      this.life--;
-      this.mass = INITIAL_MASS;
+    updateTeam: function (team) {
+      this.team = team;
+      GUI.updateTeam(this);
+    },
+
+    updateMass: function (mass) {
+      this.mass = mass;
+      this.recalc();
+      GUI.updateMass(this);
+    },
+
+    updateLife: function (life) {
+      this.life = life;
+      GUI.updateLife(this);
+    },
+
+    reset: function (isNewGame) {
+      if (isNewGame) {
+        this.updateLife(START_LIFE);
+      } else {
+        this.updateLife(this.life - 1);
+      }
+      this.updateMass(INITIAL_MASS);
       currentJump = 0;
       currentBomb = 0;
-      var _this = this;
-      setTimeout(function () {
-        var startPosition = _this.getStartPosition();
-        _this.state.pos.set(startPosition.x, startPosition.y);
-      }, 1000);
+      var startPosition = this.getStartPosition();
+      this.state.pos.set(startPosition.x, startPosition.y);
+      this.state.angular.pos = 0;
+      this.state.angular.vel = 0;
+      this.state.angular.acc = 0;
+    },
+
+    die: function () {
+      if (!this.hidden) {
+        console.log(this.state)
+        console.log('Aaaaargh !');
+        this.hidden = true;
+        this.reset(false);
+        if (this.life > 0) {
+          var _this = this;
+          setTimeout(function () {
+            _this.hidden = false;  
+          }, 1000);
+        }
+      }
     },
   };
 
@@ -156,22 +199,16 @@ Physics.behavior('player-behavior', function (parent) {
       self.player = options.player;
     },
 
-    // this is automatically called by the world
-    // when this behavior is added to the world
-    connect: function (world){
-      // we want to subscribe to world events
+    connect: function (world) {
       world.on('collisions:detected', this.checkPlayerCollision, this);
     },
 
-    // this is automatically called by the world
-    // when this behavior is removed from the world
-    disconnect: function (world){
-      // we want to unsubscribe from world events
+    disconnect: function (world) {
       world.off('collisions:detected', this.checkPlayerCollision);
     },
 
     // check to see if the player has collided
-    checkPlayerCollision: function (data){
+    checkPlayerCollision: function (data) {
       var self = this
       ,world = self._world
       ,collisions = data.collisions
@@ -188,16 +225,13 @@ Physics.behavior('player-behavior', function (parent) {
             // collision with a box
             player.openBox(element);
           } else if (element.gameType == 'player' || element.gameType == 'decor') {
-            // reset jump
+            // reset jump when on a platform
             if (col.norm.y > 0) {
               player.resetJump();
             }
           } else if (element.gameType == 'explosion') {
             // take damage
-            player.mass *= element.power;
-            player.recalc();
-          } else if (element.gameType == 'border') {
-            player.die();
+            player.updateMass(Math.max(0.001, player.mass / element.power));
           }
         }
       }
