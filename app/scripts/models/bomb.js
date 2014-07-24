@@ -6,15 +6,10 @@ Physics.body('bomb', 'circle', function (parent) {
       var defaults = {
         gameType: 'bomb',
         treatment: 'dynamic',
-        radius: 7,
+        radius: 9,
         restitution: 0.1,
         mass: 0.05,
-        cof: 1.0,
-        styles: {
-          lineWidth: 4,
-          strokeStyle: '#000',
-          fillStyle: '#d22'
-        }
+        cof: 1.0
       };
 
       parent.init.call(this, $.extend({}, defaults, options));
@@ -22,8 +17,8 @@ Physics.body('bomb', 'circle', function (parent) {
       this.duration = 800;
       this.power = 1.2;
 
-      // this.view = new Image();
-      // this.view.src = "images/bomb.png";
+      this.view = new Image();
+      this.view.src = "images/bomb.png";
     },
 
     explode: function () {
@@ -53,7 +48,7 @@ Physics.body('bomb', 'circle', function (parent) {
             styles: {
               lineWidth: 4,
               strokeStyle: '#FF8E0D',
-              fillStyle: '#000'
+              fillStyle: 'red'
             },
             power: this.power
         });

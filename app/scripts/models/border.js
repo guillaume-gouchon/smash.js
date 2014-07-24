@@ -6,7 +6,6 @@ Physics.behavior('border-behaviour', 'edge-collision-detection', function (paren
   return {
 
     init: function (options) {
-
     	var defaults = {
     		channel: 'border-collisions:detected',
 				restitution: 0,

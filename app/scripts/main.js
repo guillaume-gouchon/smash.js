@@ -1,14 +1,5 @@
 $(function() {
 
-	// var phonepad = Phonepad.getInstance();
-	// phonepad.on('connected', function (gameId) { });
-	// phonepad.on('padNotSupported', function (gamepadType) { });
-	// phonepad.on('playerConnected', function (playerId, gamepadType) { });
-	// phonepad.on('playerDisconnected', function (playerId) { });
-	// phonepad.on('commandsReceived', function (commands) { });
-	// phonepad.start();
-
-
 	var players = [];
 
 	Physics(function (world) {
@@ -69,7 +60,7 @@ $(function() {
 	  }, true);
 
 		addPlayer(world, 'sdfsdf');
-		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
+		addPlayer(world, 'sdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 	});
@@ -161,7 +152,22 @@ $(function() {
 	});
 
 	function startGame() {
-		GUI.showRoundStart();
+		GUI.showRoundStart(function () {
+			console.log('start')
+		});
 	}
+
+	function replay() {
+		$('#victory').addClass('hide');
+		startGame();
+	}
+
+	var input = new Input({
+    padNotSupported: null,
+    connected: null,
+    playerConnected: null,
+    playerDisconnected: null,
+    commandsReceived: null
+  });
 
 });

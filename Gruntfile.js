@@ -380,7 +380,16 @@ module.exports = function (grunt) {
         cache: '<%= yeoman.dist %>/**/*',
         network: '*'
       }
-    }
+    },
+
+    removelogging: {
+      dist: {
+        src: '<%= yeoman.dist %>/**/*.js',
+        options: {
+          // see below for options. this is optional.
+        }
+      }
+    },
   });
 
   grunt.registerTask('serve', function (target) {
@@ -423,6 +432,7 @@ module.exports = function (grunt) {
     'concurrent:dist',
     'autoprefixer',
     'concat',
+    'removelogging',
     'cssmin',
     'uglify',
     'copy:dist',
