@@ -9,15 +9,27 @@ Physics.body('player', 'rectangle', function (parent) {
   var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
+  var DEFAULT_CHARACTERS = ['tomato', 'lemon'];
 
   function getRandomName() {
     return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
   }
 
+  function getRandomCharacter() {
+    return DEFAULT_CHARACTERS[parseInt(Math.random() * DEFAULT_CHARACTERS.length)];
+  }
+
+  function getStartPosition(viewport) {
+    return {
+      x: (viewport.width + 500 * (2 * Math.random() - 1)) / 2,
+      y: Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105
+    };
+  }
+
   return {
 
    init: function (options) {
-      var startPosition = this.getStartPosition();
+      var startPosition = getStartPosition(options.viewport);
       var defaults = {
         gameType: 'player',
         restitution: 0.2,
@@ -43,9 +55,11 @@ Physics.body('player', 'rectangle', function (parent) {
       this.nbBombs = 1;
       this.chargeAttack = -1;
       this.chargeJump = -1;
+      this.enabled = true;
 
+      this.character = getRandomCharacter();
       this.view = new Image();
-      this.view.src = "images/character.png";
+      this.view.src = "images/" + this.character + ".png";
     },
 
     moveLeft: function () {
@@ -82,6 +96,7 @@ Physics.body('player', 'rectangle', function (parent) {
         var bomb = Physics.body('bomb', {
           x: this.state.pos.get(0),
           y: this.state.pos.get(1),
+          image: this.character
         });
         bomb.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
         bomb.state.vel.set(this.orientation * power * 0.7, - 0.3 * power);
@@ -124,40 +139,47 @@ Physics.body('player', 'rectangle', function (parent) {
       // add item to player
     },
 
-    getStartPosition: function () {
-      return {
-        x: (viewport.width + 500 * (2 * Math.random() - 1)) / 2,
-        y: Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105
-      };
-    },
-
     updateTeam: function (team) {
       this.team = team;
-      GUI.updateTeam(this);
+      this._world.emit('updateGUI', {
+        type: 'team',
+        target: this
+      });
     },
 
     updateMass: function (mass) {
       this.mass = mass;
       this.recalc();
-      GUI.updateMass(this);
+      this._world.emit('updateGUI', {
+        type: 'mass',
+        target: this
+      });
     },
 
     updateLife: function (life) {
       this.life = life;
-      GUI.updateLife(this);
+      this._world.emit('updateGUI', {
+        type: 'life',
+        target: this
+      });
     },
 
     reset: function (isNewGame) {
       if (isNewGame) {
         this.updateLife(START_LIFE);
+        this.hidden = false;
       } else {
         this.updateLife(this.life - 1);
       }
       this.updateMass(INITIAL_MASS);
       this.currentJump = 0;
       this.currentBomb = 0;
-      var startPosition = this.getStartPosition();
-      this.state.pos.set(startPosition.x, startPosition.y);
+      if (this.life > 0) {
+      var startPosition = getStartPosition(this._world._renderer.el);
+        this.state.pos.set(startPosition.x, startPosition.y);
+      }
+      this.state.acc.set(0, 0);
+      this.state.vel.set(0, 0);
       this.state.angular.pos = 0;
       this.state.angular.vel = 0;
       this.state.angular.acc = 0;
@@ -165,7 +187,6 @@ Physics.body('player', 'rectangle', function (parent) {
 
     die: function () {
       if (!this.hidden) {
-        console.log(this.state)
         console.log('Aaaaargh !');
         this.hidden = true;
         this.reset(false);
@@ -175,7 +196,12 @@ Physics.body('player', 'rectangle', function (parent) {
             _this.hidden = false;  
           }, 1000);
         }
+        this._world.emit('death');
       }
+    },
+
+    setEnabled: function(enabled) {
+      this.enabled = enabled;
     },
   };
 
@@ -206,7 +232,6 @@ Physics.behavior('player-behavior', function (parent) {
     // check to see if the player has collided
     checkPlayerCollision: function (data) {
       var self = this
-      ,world = self._world
       ,collisions = data.collisions
       ,col
       ,player = this.player
@@ -235,4 +260,5 @@ Physics.behavior('player-behavior', function (parent) {
       }
     },
   };
+
 });

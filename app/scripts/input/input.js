@@ -18,6 +18,7 @@ function Input(callbacks) {
 			attack: 40
 		}
 	};
+	
 	var KEYBOARD_PLAYER_1_ID = 'keyboard1';
 	var KEYBOARD_PLAYER_2_ID = 'keyboard2';
 
@@ -40,35 +41,35 @@ function Input(callbacks) {
 		switch(event.keyCode) {
 			case KEYS_MAP.player1.left:
 				keyboardControllers[0].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, -1);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player1.right:
 				keyboardControllers[0].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 1);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player2.left:
 				keyboardControllers[1].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, -1);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 			case KEYS_MAP.player2.right:
 				keyboardControllers[1].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 1);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 			case KEYS_MAP.player1.jump:
 				keyboardControllers[0].updateButtonState(Controller.BUTTONS_MAP.A, true);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player1.attack:
 				keyboardControllers[0].updateButtonState(Controller.BUTTONS_MAP.X, true);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player2.jump:
 				keyboardControllers[1].updateButtonState(Controller.BUTTONS_MAP.A, true);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 			case KEYS_MAP.player2.attack:
 				keyboardControllers[1].updateButtonState(Controller.BUTTONS_MAP.X, true);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 			case KEYS_MAP.player1.addPlayer:
 				var index = keyboardPlayers.indexOf(KEYBOARD_PLAYER_1_ID);
@@ -118,42 +119,42 @@ function Input(callbacks) {
 			case KEYS_MAP.player1.left:
 				if (keyboardControllers[0].axes[Controller.BUTTONS_MAP.axisHorizontal] == -1) {
 					keyboardControllers[0].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 0);
-					callbacks.commandsReceived(keyboardControllers[0]);
+					callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				}
 				break;
 			case KEYS_MAP.player1.right:
 				if (keyboardControllers[0].axes[Controller.BUTTONS_MAP.axisHorizontal] == 1) {
 					keyboardControllers[0].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 0);
-					callbacks.commandsReceived(keyboardControllers[0]);
+					callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				}
 				break;
 			case KEYS_MAP.player2.left:
 				if (keyboardControllers[1].axes[Controller.BUTTONS_MAP.axisHorizontal] == -1) {
 					keyboardControllers[1].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 0);
-					callbacks.commandsReceived(keyboardControllers[1]);
+					callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				}
 				break;
 			case KEYS_MAP.player2.right:
 				if (keyboardControllers[1].axes[Controller.BUTTONS_MAP.axisHorizontal] == 1) {
 					keyboardControllers[1].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, 0);
-					callbacks.commandsReceived(keyboardControllers[1]);
+					callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				}
 				break;
 			case KEYS_MAP.player1.jump:
 				keyboardControllers[0].updateButtonState(Controller.BUTTONS_MAP.A, false);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player1.attack:
 				keyboardControllers[0].updateButtonState(Controller.BUTTONS_MAP.X, false);
-				callbacks.commandsReceived(keyboardControllers[0]);
+				callbacks.commandsReceived(keyboardControllers[0].toJSON());
 				break;
 			case KEYS_MAP.player2.jump:
 				keyboardControllers[1].updateButtonState(Controller.BUTTONS_MAP.A, false);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 			case KEYS_MAP.player2.attack:
 				keyboardControllers[1].updateButtonState(Controller.BUTTONS_MAP.X, false);
-				callbacks.commandsReceived(keyboardControllers[1]);
+				callbacks.commandsReceived(keyboardControllers[1].toJSON());
 				break;
 		}
 	});
@@ -164,25 +165,27 @@ function Input(callbacks) {
 	this.update = function (players) {
 		for (var i in players) {
 			var player = players[i];
-			var commands = player.commands;
-			if (commands.axes[Controller.BUTTONS_MAP.axisHorizontal] < -AXIS_THRESHOLD) {
-				player.moveLeft();
-			} else if (commands.axes[Controller.BUTTONS_MAP.axisHorizontal] > AXIS_THRESHOLD) {
-				player.moveRight();
-			} else {
-				player.stop();
-			}
+			if (player.enabled) {
+				var commands = player.commands;
+				if (commands.axes[Controller.BUTTONS_MAP.axisHorizontal] < -AXIS_THRESHOLD) {
+					player.moveLeft();
+				} else if (commands.axes[Controller.BUTTONS_MAP.axisHorizontal] > AXIS_THRESHOLD) {
+					player.moveRight();
+				} else {
+					player.stop();
+				}
 
-			if (commands.buttons[Controller.BUTTONS_MAP.A].pressed) {
-				player.jump();
-			} else {
-				player.releaseJump();
-			}
+				if (commands.buttons[Controller.BUTTONS_MAP.A].pressed) {
+					player.jump();
+				} else {
+					player.releaseJump();
+				}
 
-			if (commands.buttons[Controller.BUTTONS_MAP.X].pressed) {
-				player.attack();
-			} else {
-				player.releaseAttack();
+				if (commands.buttons[Controller.BUTTONS_MAP.X].pressed) {
+					player.attack();
+				} else {
+					player.releaseAttack();
+				}
 			}
 		}
 	};

@@ -26,12 +26,20 @@
 		margin-bottom: 4px;
 		padding: 8px;
 
-		&.defeat {
+		&.dead {
 			@extend .invisible;
 		}
 
 		&.loseLife {
 			animation: loseLife 0.3s linear 1; 
+		}
+
+		&.grow {
+			transform: scale(1.5);
+		}
+
+		&.shrink {
+			transform: scale(0.1);	
 		}
 
 		strong {
@@ -42,7 +50,7 @@
 		}
 
 		.name {
-			width: 170px;
+			width: 185px;
 		}
 
 		.mass {
@@ -99,7 +107,6 @@
 	&.grow {
 		transform: scale(1.0);
 	}
-
 }
 
 #victory {
@@ -123,6 +130,15 @@
 		text-shadow: none;
 		animation: bounce 0.4s alternate infinite;
 	}
+}
+
+#gameIdInGame {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	z-index: 100;
+	font-size: 0.9em;
+	color: $blue;
 }
 
 .red {
@@ -152,7 +168,7 @@
 
 @keyframes loseLife {
   0% {
-      background: red;
+      background: white;
   }
   100% {
       background: inherit;

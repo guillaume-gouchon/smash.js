@@ -90,8 +90,8 @@ button {
 
 	#controls {
 		font-family: 'myFont';
-		top: 0px;
-		right: 0px;
+		top: 0;
+		right: 0;
 		color: #111;
 
 		.tile {
@@ -171,6 +171,10 @@ button {
 					background: $green;
 				}
 			}
+		}
+
+		.notCompatible {
+			opacity: 0.3;
 		}
 	}
 

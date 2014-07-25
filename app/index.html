@@ -58,7 +58,10 @@
       <div><span>fsdfd</span> rocks !</div>
       <button id="replay">Replay ?</button>
     </div>
+
+    <strong id="gameIdInGame" class="hide">Game ID : <span class="gameId"></span></strong>
   </div>
+
 
   <div id="instructions">
 
@@ -90,7 +93,7 @@
         <small>
           Go on <a href="http://pad.gouchon.com" target="_blank">pad.gouchon.com</a> with your phone<br>and enter :
         </small>
-        <strong id="gameId" class="blue"></strong>
+        <strong class="gameId" class="blue"></strong>
       </div>
 
       <div id="keyboards" class="tile">
@@ -98,10 +101,10 @@
           <i class="fa fa-keyboard-o fa-2x"></i> Play with keyboard
         </div>
         <p>
-          add player <span class="key">1</span> then <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span>
+          add player with key <span class="key">1</span> then <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span>
         </p>
         <p>
-          add player <span class="key">2</span> then <span class="key fa fa-arrow-up fa-1x"></span><span class="key fa fa-arrow-down fa-1x"></span><span class="key fa fa-arrow-left fa-1x"></span><span class="key fa fa-arrow-right fa-1x"></span>
+          add player with key <span class="key">2</span> then <span class="key fa fa-arrow-up fa-1x"></span><span class="key fa fa-arrow-down fa-1x"></span><span class="key fa fa-arrow-left fa-1x"></span><span class="key fa fa-arrow-right fa-1x"></span>
         </p>
       </div>
 
@@ -140,6 +143,9 @@
   <script src="scripts/models/player.js"></script>
   <script src="scripts/input/controller.js"></script>
   <script src="scripts/input/input.js"></script>
+  <script src="scripts/world.js"></script>
+  <script src="scripts/map.js"></script>
+  <script src="scripts/game.js"></script> 
   <script src="scripts/gui.js"></script>
   <script src="scripts/main.js"></script>
   <!-- endbuild -->

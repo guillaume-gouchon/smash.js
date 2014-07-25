@@ -5,10 +5,9 @@ Physics.body('bomb', 'circle', function (parent) {
     init: function (options) {
       var defaults = {
         gameType: 'bomb',
-        treatment: 'dynamic',
         radius: 9,
-        restitution: 0.1,
-        mass: 0.05,
+        restitution: 0.2,
+        mass: 0.03,
         cof: 1.0
       };
 
@@ -18,7 +17,7 @@ Physics.body('bomb', 'circle', function (parent) {
       this.power = 1.2;
 
       this.view = new Image();
-      this.view.src = "images/bomb.png";
+      this.view.src = "images/" + options.image + "_bomb.png";
     },
 
     explode: function () {
