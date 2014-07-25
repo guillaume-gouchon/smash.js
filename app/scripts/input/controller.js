@@ -27,8 +27,6 @@ function Controller(playerId) {
 
 	this.updateButtonState = function (button, pressed) {
 		var needsUpdate = buttons[button].updateState(pressed);
-		this.releaseAllButtons();
-		buttons[button].updateState(pressed);
 		return needsUpdate;
 	};
 

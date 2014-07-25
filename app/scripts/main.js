@@ -1,6 +1,6 @@
 $(function() {
 
-	var players = [];
+	var players = {};
 
 	Physics(function (world) {
 
@@ -25,6 +25,7 @@ $(function() {
 		// game loop
 		world.on('step', function () {
 			popBox(world);
+			input.update(players);
 
 	    world.render();
 		});
@@ -59,8 +60,8 @@ $(function() {
 	      renderer.el.height = window.innerHeight;
 	  }, true);
 
-		addPlayer(world, 'sdfsdf');
-		addPlayer(world, 'sdf');
+		addPlayer(world, 'keyboard1');
+		addPlayer(world, 'keyboard2');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 	});
@@ -103,9 +104,9 @@ $(function() {
 	function addPlayer(world, id) {
 		var player = Physics.body('player', {
 	    id: id,
-	    team: players.length % 4
+	    team: Object.keys(players).length % 4
 	  });
-		players.push(player);
+		players[player.id] = player;
 	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
 		world.add([player, playerBehavior]);
 		GUI.addPlayer(player);
@@ -121,36 +122,6 @@ $(function() {
 		}
 	}
 
-	$(window).keydown(function (event) {
-		switch (event.keyCode) {
-			case 65: 
-				players[0].moveLeft();
-				break;
-			case 68: 
-				players[0].moveRight();
-				break;
-			case 87:
-				players[0].jump(); 
-				break;
-			case 83:
-				players[0].chargeAttack(); 
-				break;
-		}
-	});
-	$(window).keyup(function (event) {
-		switch (event.keyCode) {
-			case 65:
-				players[0].stopLeft();
-				break;
-			case 68:
-				players[0].stopRight();
-				break;
-			case 83:
-				players[0].attack(); 
-				break;
-		}
-	});
-
 	function startGame() {
 		GUI.showRoundStart(function () {
 			console.log('start')
@@ -164,10 +135,13 @@ $(function() {
 
 	var input = new Input({
     padNotSupported: null,
-    connected: null,
+    connected: function (gameId) {
+    },
     playerConnected: null,
     playerDisconnected: null,
-    commandsReceived: null
-  });
+    commandsReceived: function (commands) {
+    	players[commands.pId].commands = commands.toJSON();
+    }
+	});
 
 });
