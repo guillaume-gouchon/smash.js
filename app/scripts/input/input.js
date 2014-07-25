@@ -2,22 +2,29 @@ function Input(callbacks) {
 
 	var KEYS_MAP = {
 		player1: {
+			addPlayer: 49,
+			addPlayerBis: 97,
 			left: 65,
 			right: 68,
 			jump: 87,
 			attack: 83
 		},
 		player2: {
+			addPlayer: 50,
+			addPlayerBis: 98,
 			left: 37,
 			right: 39,
 			jump: 38,
 			attack: 40
 		}
 	};
+	var KEYBOARD_PLAYER_1_ID = 'keyboard1';
+	var KEYBOARD_PLAYER_2_ID = 'keyboard2';
 
 	var AXIS_THRESHOLD = 0.3;
 
-	var keyboardControllers = [new Controller('keyboard1'), new Controller('keyboard2')];
+	var keyboardControllers = [new Controller(KEYBOARD_PLAYER_1_ID), new Controller(KEYBOARD_PLAYER_2_ID)];
+	var keyboardPlayers = [];
 
 	// init phonepad.js (= gamepads + phonepads)
 	var phonepad = Phonepad.getInstance();
@@ -62,6 +69,46 @@ function Input(callbacks) {
 			case KEYS_MAP.player2.attack:
 				keyboardControllers[1].updateButtonState(Controller.BUTTONS_MAP.X, true);
 				callbacks.commandsReceived(keyboardControllers[1]);
+				break;
+			case KEYS_MAP.player1.addPlayer:
+				var index = keyboardPlayers.indexOf(KEYBOARD_PLAYER_1_ID);
+				if (index >= 0) {
+					keyboardPlayers.splice(index, 1);
+					callbacks.playerDisconnected(KEYBOARD_PLAYER_1_ID);
+				} else {
+					keyboardPlayers.push(KEYBOARD_PLAYER_1_ID);
+					callbacks.playerConnected(KEYBOARD_PLAYER_1_ID, 2);
+				}
+				break;
+			case KEYS_MAP.player1.addPlayerBis:
+				var index = keyboardPlayers.indexOf(KEYBOARD_PLAYER_1_ID);
+				if (index >= 0) {
+					keyboardPlayers.splice(index, 1);
+					callbacks.playerDisconnected(KEYBOARD_PLAYER_1_ID);
+				} else {
+					keyboardPlayers.push(KEYBOARD_PLAYER_1_ID);
+					callbacks.playerConnected(KEYBOARD_PLAYER_1_ID, 2);
+				}
+				break;
+			case KEYS_MAP.player2.addPlayer:
+				var index = keyboardPlayers.indexOf(KEYBOARD_PLAYER_2_ID);
+				if (index >= 0) {
+					keyboardPlayers.splice(index, 1);
+					callbacks.playerDisconnected(KEYBOARD_PLAYER_2_ID);
+				} else {
+					keyboardPlayers.push(KEYBOARD_PLAYER_2_ID);
+					callbacks.playerConnected(KEYBOARD_PLAYER_2_ID, 2);
+				}
+				break;
+			case KEYS_MAP.player2.addPlayerBis:
+				var index = keyboardPlayers.indexOf(KEYBOARD_PLAYER_2_ID);
+				if (index >= 0) {
+					keyboardPlayers.splice(index, 1);
+					callbacks.playerDisconnected(KEYBOARD_PLAYER_2_ID);
+				} else {
+					keyboardPlayers.push(KEYBOARD_PLAYER_2_ID);
+					callbacks.playerConnected(KEYBOARD_PLAYER_2_ID, 2);
+				}
 				break;
 		}
 	});

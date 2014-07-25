@@ -30,6 +30,10 @@
 			@extend .invisible;
 		}
 
+		&.loseLife {
+			animation: loseLife 0.3s linear 1; 
+		}
+
 		strong {
 			display: inline-block;
 			margin-left: 10px;
@@ -143,5 +147,14 @@
   }
   100% {
       transform: scale(0.9);
+  }
+}
+
+@keyframes loseLife {
+  0% {
+      background: red;
+  }
+  100% {
+      background: inherit;
   }
 }

@@ -62,8 +62,6 @@ $(function() {
 
 		addPlayer(world, 'keyboard1');
 		addPlayer(world, 'keyboard2');
-		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
-		// addPlayer(world, viewport.width / 3, 0, 'sdfsdf');
 	});
 
 	function addBridge(world, x, y, w, h) {
@@ -134,11 +132,17 @@ $(function() {
 	}
 
 	var input = new Input({
-    padNotSupported: null,
-    connected: function (gameId) {
+    padNotSupported: function (padType) {
     },
-    playerConnected: null,
-    playerDisconnected: null,
+    connected: function (gameId) {
+    	$('#gameId').html(gameId);
+    },
+    playerConnected: function (playerId, padType) {
+    	console.log(playerId, padType)
+    },
+    playerDisconnected: function (playerId) {
+    	console.log(playerId)
+    },
     commandsReceived: function (commands) {
     	players[commands.pId].commands = commands.toJSON();
     }

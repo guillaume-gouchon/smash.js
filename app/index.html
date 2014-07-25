@@ -17,6 +17,7 @@
   <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114.png" />
 
   <!-- build:css(.tmp) styles/game.css -->
+  <link rel="stylesheet" href="styles/font-awesome.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/background.css">
   <link rel="stylesheet" href="styles/gui.css">
@@ -55,12 +56,69 @@
 
     <div id="victory" class="hide">
       <div><span>fsdfd</span> rocks !</div>
-      <button onclick="replay()">Replay ?</button>
+      <button id="replay">Replay ?</button>
     </div>
   </div>
 
   <div id="instructions">
+
+    <div id="controls">
+      <div id="gamepads" class="tile">
+        <div class="red title">
+          <i class="fa fa-gamepad fa-2x"></i> Play with USB Gamepads
+        </div>
+        <div id="commands">
+          <div>
+            <img src="images/axes.png"/>
+            <p>Move</p>
+          </div>
+          <div>
+            <span class="button buttonX">X</span>
+            <p>Attack</p>
+          </div>
+          <div>
+            <span class="button buttonA">A</span>
+            <p>Jump</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="phonepads" class="tile">
+        <div class="blue title">
+          <i class="fa fa-mobile-phone fa-2x"></i> Use your phone as a Gamepad
+        </div>
+        <small>
+          Go on <a href="http://pad.gouchon.com" target="_blank">pad.gouchon.com</a> with your phone<br>and enter :
+        </small>
+        <strong id="gameId" class="blue"></strong>
+      </div>
+
+      <div id="keyboards" class="tile">
+        <div class="green title">
+          <i class="fa fa-keyboard-o fa-2x"></i> Play with keyboard
+        </div>
+        <p>
+          add player <span class="key">1</span> then <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span>
+        </p>
+        <p>
+          add player <span class="key">2</span> then <span class="key fa fa-arrow-up fa-1x"></span><span class="key fa fa-arrow-down fa-1x"></span><span class="key fa fa-arrow-left fa-1x"></span><span class="key fa fa-arrow-right fa-1x"></span>
+        </p>
+      </div>
+
+    </div>
+
+    <div id="startGameLayout">
+      <button id="startGame">Start Game !</button>
+    </div>
     
+    <div id="credits">
+      <div class="hidden">
+        Game and Music by <a href="http://gouchon.com" target="_blank"> Guillaume Gouchon</a><br/>
+        Art by <a href="" target="_blank">Sonia Lahcene</a>
+      </div>
+      Credits
+    </div>
+
 
   </div>
 

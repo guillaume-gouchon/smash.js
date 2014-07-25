@@ -39,6 +39,13 @@ var GUI = {
 
 	updateLife: function (player) {
 		var playerElement = getPlayerElement(player.id);
+
+		// animate UI
+		playerElement.addClass('loseLife');
+		setTimeout(function () {
+			playerElement.removeClass('loseLife');
+		}, 500);
+
 		if (player.life == 0) {
 			// player has lost
 			$('img', playerElement).addClass('invisible');
