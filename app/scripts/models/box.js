@@ -14,40 +14,53 @@ Physics.body('box', 'rectangle', function (parent) {
 
       parent.init.call(this, $.extend({}, defaults, options));
 
-      this.view = new Image();
-      this.view.src = "images/box.png";
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/box.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
 
     explode: function () {
       var world = this._world;
 
       var scratch = Physics.scratchpad();
-      var rnd = scratch.vector();
-      var pos = this.state.pos;
-      var n = 4;
-      var r = this.width * 0.6;
-      var mass = 0.00001;
-      var d;
-      var debris = [];
+      var rnd = scratch.vector()
+      ,pos = this.state.pos
+      ,n = 4
+      ,r = this.width * 0.6
+      ,mass = 0.00001
+      ,d
+      ,width
+      ,height
+      ,debris = [];
 
       // create debris
       while (n--){
+        width = r * Math.random();
+        height = r * Math.random();
         rnd.set(Math.random() - 0.5, Math.random() - 0.5).mult(r);
-        d = Physics.body('rectangle', {
+        d = Physics.body('convex-polygon', {
           x: pos.get(0) + rnd.get(0),
           y: pos.get(1) + rnd.get(1),
           vx: this.state.vel.get(0) + (Math.random() - 0.5),
           vy: this.state.vel.get(1) + (Math.random() - 0.5),
           angularVelocity: (Math.random()-0.5) * 0.06,
-          height: r * Math.random(),
-          width: r * Math.random(),
           mass: mass,
           restitution: 0,
           styles: {
-            lineWidth: 4,
-            strokeStyle: '#8b5c22',
-            fillStyle: '#cd9945'
-          }
+            lineWidth: 3,
+            strokeStyle: 0x8b5c22,
+            fillStyle: 0xcd9945
+          },
+          vertices: [
+            {x: 0, y: 0},
+            {x: width, y: 0},
+            {x: width, y: height},
+            {x: 0, y: height}
+          ],
         });
         debris.push(d);
       }

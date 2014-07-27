@@ -16,8 +16,13 @@ Physics.body('bomb', 'circle', function (parent) {
       this.duration = 800;
       this.power = 1.2;
 
-      this.view = new Image();
-      this.view.src = "images/" + options.image + "_bomb.png";
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/' + options.image + '_bomb.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
 
     explode: function () {
@@ -25,29 +30,37 @@ Physics.body('bomb', 'circle', function (parent) {
       if (!world) {
         return;
       }
-      var pos = this.state.pos;
-      var n = 15;
-      var r = 6;
-      var mass = 0.05;
-      var d;
-      var debris = [];
+      var pos = this.state.pos
+      ,n = 15
+      ,r = 6
+      ,mass = 0.05
+      ,d
+      ,width
+      ,height
+      ,debris = [];
 
       // create debris
       while ( n-- ){
-        d = Physics.body('rectangle', {
+        width = r * Math.random();
+        height = r * Math.random();
+        d = Physics.body('convex-polygon', {
             gameType: 'explosion',
             x: pos.get(0),
             y: pos.get(1),
             vx: Math.random() - 0.5,
             vy: Math.random() - 0.5,
-            height: r * Math.random(),
-            width: r * Math.random(),
+            vertices: [
+              {x: 0, y: 0},
+              {x: width, y: 0},
+              {x: width, y: height},
+              {x: 0, y: height}
+            ],
             mass: mass,
             restitution: 0.9,
             styles: {
-              lineWidth: 4,
-              strokeStyle: '#FF8E0D',
-              fillStyle: 'red'
+              lineWidth: 2,
+              strokeStyle: 0xFF8E0D,
+              fillStyle: 0xff0000
             },
             power: this.power
         });

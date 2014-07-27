@@ -6,6 +6,7 @@
     "modernizr": "~2.6.2",
     "jquery": "~1.10.2",
     "PhysicsJS": "~0.6.0",
-    "phonepad.js": "latest"
+    "phonepad.js": "latest",
+    "pixi.js": "~1.6.1"
   }
 }

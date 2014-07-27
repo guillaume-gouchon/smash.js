@@ -58,8 +58,14 @@ Physics.body('player', 'rectangle', function (parent) {
       this.enabled = true;
 
       this.character = getRandomCharacter();
-      this.view = new Image();
-      this.view.src = "images/" + this.character + ".png";
+      
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/' + this.character + '.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
 
     moveLeft: function () {

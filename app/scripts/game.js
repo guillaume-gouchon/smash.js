@@ -39,7 +39,7 @@ function Game (world) {
 		var player = Physics.body('player', {
 	    id: playerId,
 	    team: Object.keys(players).length % 4,
-	    viewport: world._renderer.el
+	    viewport: world._renderer.renderer
 	  });
 		players[player.id] = player;
 	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
@@ -62,7 +62,7 @@ function Game (world) {
 	var popBox = function () {
 		if (Math.random() < 0.003) {
 			var element = Physics.body('box', {
-		    x: (viewport.width + 600 * (2 * Math.random() - 1)) / 2,
+		    x: (world._renderer.renderer.width + 600 * (2 * Math.random() - 1)) / 2,
 		    y: 0
 		  });
 			world.add(element);

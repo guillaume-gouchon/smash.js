@@ -1,3 +1,5 @@
+var renderer;
+
 function initWorld (world, game, mapType) {
 
 	// setup viewport
@@ -8,7 +10,7 @@ function initWorld (world, game, mapType) {
 	};
 
 	// setup renderer
-	var renderer = Physics.renderer('canvas', viewport);
+	renderer = Physics.renderer('pixi', viewport);
 	world.add(renderer);
 
 	// resize window events

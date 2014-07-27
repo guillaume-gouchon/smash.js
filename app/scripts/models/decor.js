@@ -36,8 +36,13 @@ Physics.body('bridge', 'decor', function (parent) {
 
       parent.init.call(this, options);
 
-      this.view = new Image();
-      this.view.src = "images/platform.png";
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/platform.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
   };
   
@@ -61,8 +66,13 @@ Physics.body('platform', 'decor', function (parent) {
 
       parent.init.call(this, options);
 
-      this.view = new Image();
-      this.view.src = "images/base.png";
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/base.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
   };
   
@@ -84,9 +94,6 @@ Physics.body('movingBridge', 'bridge', function (parent) {
       iY = options.y;
 
       parent.init.call(this, options);
-
-      this.view = new Image();
-      this.view.src = "images/platform.png";
 
       // initiate movement
       if (this.orientation == 0) {
