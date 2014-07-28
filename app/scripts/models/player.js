@@ -83,7 +83,7 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     attack: function () {
-      if (this.chargeAttack == -1 && this.currentBomb < this.nbBombs) {
+      if (this.enabled && this.chargeAttack == -1 && this.currentBomb < this.nbBombs) {
         this.chargeAttack = new Date().getTime();
       }
     },
@@ -97,7 +97,7 @@ Physics.body('player', 'rectangle', function (parent) {
         var pos = this.state.pos;
         var scratch = Physics.scratchpad();
         var rnd = scratch.vector();
-        rnd.set(this.orientation, -0.7);        
+        rnd.set(this.orientation * 20, -0.7 * 20);        
 
         var bomb = Physics.body('bomb', {
           x: this.state.pos.get(0),
@@ -127,6 +127,7 @@ Physics.body('player', 'rectangle', function (parent) {
 
         this.currentJump++;
         this.state.vel.y = - this.jumpSkill;
+        this.state.angular.vel = (Math.random() < 0.5 ? -1 : 1) * 0.008;
       }   
     },
 
@@ -141,8 +142,7 @@ Physics.body('player', 'rectangle', function (parent) {
     openBox: function (box) {
       console.log('whooohooo, a box !')
       box.explode();
-      // TODO : add item animation
-      // add item to player
+      this.animateGetItem();
     },
 
     updateTeam: function (team) {
@@ -181,9 +181,8 @@ Physics.body('player', 'rectangle', function (parent) {
       this.currentJump = 0;
       this.currentBomb = 0;
       if (this.life > 0) {
-        var startPosition = getStartPosition(this._world._renderer.el);
+        var startPosition = getStartPosition(this.viewport);
         this.state.pos.set(startPosition.x, startPosition.y);
-        this.animateRepop();
       }
       this.state.acc.set(0, 0);
       this.state.vel.set(0, 0);
@@ -193,23 +192,53 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     animateRepop: function () {
-      // var animation = Physics.geometry('circle', {
-      //   treatment: 'static',
-      //   x: this.state.pos.x,
-      //   y: this.state.pos.y,
-      //   radius: 10,
-      //   restitution: 0,
-      //   styles: {
-      //     lineWidth: 4,
-      //     strokeStyle: '#8b5c22',
-      //     fillStyle: '#cd9945'
-      //   }
-      // });
-      // var world = this._world;
-      // world.add(animation);
-      // setTimeout(function () {
-      //   world.removeBody(animation);
-      // }, 800);
+      var anim = PIXI.Sprite.fromImage("images/" + this.character + ".png");
+      anim.alpha = 0.4;
+      anim.anchor = {
+        x: 0.5,
+        y: 0.5
+      };
+      anim.x = this.state.pos.x;
+      anim.y = this.state.pos.y;
+      var world = this._world;
+      world._renderer.stage.addChild(anim);
+      
+      var tween = new TWEEN.Tween( { x: 0, y: 0 } )
+        .to( { x: 3, y: 3 }, 500)
+        .easing(TWEEN.Easing.Bounce.Out)
+        .onUpdate(function () {
+            anim.scale.x = this.x;
+            anim.scale.y = this.y;
+        })
+        .onComplete(function () {
+          world.emit('removeBody', anim);
+        })
+        .start();
+    },
+
+    animateGetItem: function () {
+      var anim = PIXI.Sprite.fromImage("images/" + this.character + ".png");
+      anim.alpha = 0.4;
+      anim.anchor = {
+        x: 0.5,
+        y: 0.5
+      };
+      anim.x = this.state.pos.x;
+      anim.y = this.state.pos.y;
+      var world = this._world;
+      world._renderer.stage.addChild(anim);
+      
+      var tween = new TWEEN.Tween( { x: 0, y: 0 } )
+        .to( { x: 2, y: 2 }, 500)
+        .easing(TWEEN.Easing.Bounce.Out)
+        .onUpdate(function () {
+            anim.scale.x = this.x;
+            anim.scale.y = this.y;
+        })
+        .onComplete(function () {
+          world.emit('removeBody', anim);
+        })
+        .start();
     },
 
     die: function () {
@@ -220,6 +249,7 @@ Physics.body('player', 'rectangle', function (parent) {
         if (this.life > 0) {
           var _this = this;
           setTimeout(function () {
+            _this.animateRepop();
             _this.hidden = false;  
           }, 1000);
         }
@@ -271,17 +301,24 @@ Physics.behavior('player-behavior', function (parent) {
           element = col.bodyA != player ? col.bodyA : col.bodyB;
           if (element.gameType === 'box') {
             // collision with a box
-            if (col.norm.y > 0) {
+            if (Math.abs(col.norm.y) > 0.3 && Math.abs(col.norm.x) < 0.3) {
               player.openBox(element);
             }
           } else if (element.gameType == 'player' || element.gameType == 'decor') {
             // reset jump when on a platform
-            if (col.norm.y > 0) {
+            if (Math.abs(col.norm.y) > 0.3 && element.state.pos.y > player.state.pos.y) {
               player.resetJump();
+              player.state.angular.acc = 0;
+              player.state.angular.vel = 0;
+              player.state.angular.pos = 0;
             }
           } else if (element.gameType == 'explosion') {
             // take damage
             player.updateMass(Math.max(0.001, player.mass / element.power));
+            player.setEnabled(false);
+            setTimeout(function () {
+              player.setEnabled(true);
+            }, 800);
           }
         }
       }

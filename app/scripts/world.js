@@ -13,18 +13,20 @@ function initWorld (world, game, mapType) {
 	renderer = Physics.renderer('pixi', viewport);
 	world.add(renderer);
 
-	// resize window events
-  window.addEventListener('resize', function () {
-      renderer.el.width = window.innerWidth;
-      renderer.el.height = window.innerHeight;
-  }, true);
-
 	// add borders
 	var viewportBounds = Physics.aabb(0, -100, viewport.width, viewport.height + 200);
   world.add(Physics.behavior('border-behaviour', {
       aabb: viewportBounds
   }));
 
+	// resize window events
+  window.addEventListener('resize', function () {
+      renderer.el.width = window.innerWidth;
+      renderer.el.height = window.innerHeight;
+      viewportBounds = Physics.aabb(0, -100, window.innerWidth, window.innerHeight + 200);
+  }, true);
+
+	
   // create map
   world.add(new Map(mapType, viewport));
 
@@ -44,6 +46,13 @@ function initWorld (world, game, mapType) {
   // subscribe to events coming from logic side
 	world.on('death', game.checkVictory);
 	world.on('updateGUI', game.updateGUI);
+	world.on('removeBody', function (body) {
+		try {
+			renderer.stage.removeChild(body.view != null ? body.view : body);
+		} catch (e) {
+		}
+		world.removeBody(body);
+	});
 
 	// subscribe to ticker to advance the simulation
 	Physics.util.ticker.on(function (time, dt) {
@@ -51,7 +60,8 @@ function initWorld (world, game, mapType) {
 	}).start();
 
 	// game loop
-	world.on('step', function () {
+	world.on('step', function (time) {
+		TWEEN.update();
 		game.update();
     world.render();
 	});

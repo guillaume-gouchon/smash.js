@@ -58,7 +58,7 @@ Physics.body('bomb', 'circle', function (parent) {
             mass: mass,
             restitution: 0.9,
             styles: {
-              lineWidth: 2,
+              lineWidth: 3,
               strokeStyle: 0xFF8E0D,
               fillStyle: 0xff0000
             },
@@ -70,14 +70,14 @@ Physics.body('bomb', 'circle', function (parent) {
       setTimeout(function() {
         if (world && debris) {
           for (var i = 0, l = debris.length; i < l; ++i) {
-            world.removeBody(debris[i]);
+            world.emit('removeBody', debris[i]);
           }
           debris = undefined;
         }
       }, 500);
 
       world.add(debris);
-      world.removeBody(this);
+      world.emit('removeBody', this);
     }
   };
   

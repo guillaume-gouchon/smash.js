@@ -49,7 +49,7 @@ function Game (world) {
 	};
 
 	var removePlayer = function (playerId) {
-		world.removeBody(players[playerId]);
+		world.emit('removeBody', players[playerId]);
 		gui.removePlayer(playerId);
 		delete players[playerId];
 		var n = 0;

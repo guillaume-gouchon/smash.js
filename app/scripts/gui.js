@@ -63,7 +63,7 @@ function GUI() {
 	this.removePlayer = function (playerId) {
 		getPlayerElement(playerId).addClass('shrink');
 		setTimeout(function () {
-			getPlayerElement(playerId).remove();
+			getPlayerElement(playerId)[0].remove();
 		}, 300);
 	};
 

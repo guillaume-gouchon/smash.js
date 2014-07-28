@@ -39,7 +39,7 @@ Physics.behavior('border-behaviour', 'edge-collision-detection', function (paren
         if (element.gameType === 'player' || col.bodyB.gameType === 'player') {
           element.die();
         } else {
-        	world.removeBody(element);
+          world.emit('removeBody', element);
         }
       }
     }

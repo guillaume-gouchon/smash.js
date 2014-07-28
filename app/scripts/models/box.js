@@ -51,7 +51,7 @@ Physics.body('box', 'rectangle', function (parent) {
           mass: mass,
           restitution: 0,
           styles: {
-            lineWidth: 3,
+            lineWidth: 2,
             strokeStyle: 0x8b5c22,
             fillStyle: 0xcd9945
           },
@@ -67,13 +67,13 @@ Physics.body('box', 'rectangle', function (parent) {
 
       setTimeout(function() {
         for (var i = 0, l = debris.length; i < l; ++i){
-          world.removeBody(debris[i]);
+          world.emit('removeBody', debris[i]);
         }
         debris = undefined;
       }, 1000);
 
       world.add(debris);
-      world.removeBody(this);
+      world.emit('removeBody', this);
       scratch.done();
     }
   };

@@ -28,13 +28,13 @@ function Input(callbacks) {
 	var keyboardPlayers = [];
 
 	// init phonepad.js (= gamepads + phonepads)
-	var phonepad = Phonepad.getInstance();
-	phonepad.on('connected', callbacks.connected);
-	phonepad.on('padNotSupported', callbacks.padNotSupported);
-	phonepad.on('playerConnected', callbacks.playerConnected);
-	phonepad.on('playerDisconnected', callbacks.playerDisconnected);
-	phonepad.on('commandsReceived', callbacks.commandsReceived);
-	phonepad.start();
+	// var phonepad = Phonepad.getInstance();
+	// phonepad.on('connected', callbacks.connected);
+	// phonepad.on('padNotSupported', callbacks.padNotSupported);
+	// phonepad.on('playerConnected', callbacks.playerConnected);
+	// phonepad.on('playerDisconnected', callbacks.playerDisconnected);
+	// phonepad.on('commandsReceived', callbacks.commandsReceived);
+	// phonepad.start();
 
 	// init keyboard
 	$(document).keydown(function (event) {

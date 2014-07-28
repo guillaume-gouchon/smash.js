@@ -7,6 +7,7 @@
     "jquery": "~1.10.2",
     "PhysicsJS": "~0.6.0",
     "phonepad.js": "latest",
-    "pixi.js": "~1.6.1"
+    "pixi.js": "~1.6.1",
+    "tween.js": "sole/tween.js"
   }
 }
