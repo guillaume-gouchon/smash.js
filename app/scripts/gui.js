@@ -29,7 +29,7 @@ function GUI() {
 	};
 
 	var getPlayerElement = function (playerId) {
-		return $('#players .player[data-id="' + playerId + '"');
+		return $('#players .player[data-id="' + playerId + '"]');
 	};
 
 	var roundStartAnimation = function (labels, duration, delay, callback) {

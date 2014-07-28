@@ -44,6 +44,7 @@ function Game (world) {
 		players[player.id] = player;
 	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
 		world.add([player, playerBehavior]);
+		player.animateRepop();
 		gui.addPlayer(player);
 	};
 
