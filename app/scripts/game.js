@@ -6,7 +6,8 @@ function Game (world) {
 
 	var started = false;
 
-	var input = new Input({
+	var _this = this;
+	var input = new Input(this, {
     padNotSupported: function (padType) {
     	if (padType == Phonepad.PAD_TYPES.gamepad) {
     		$('#gamepads').addClass('notCompatible');
@@ -20,7 +21,7 @@ function Game (world) {
     },
 
     playerConnected: function (playerId, padType) {
-    	if (players.playerId == null) {
+    	if (_this.loaded && players.playerId == null) {
     		addPlayer(playerId);
     	}
     },
@@ -69,6 +70,13 @@ function Game (world) {
 			world.add(element);
 		}
 	};
+
+	this.loaded = false;
+
+	this.onLoaded = function () {
+		_this.loaded = true;
+		gui.hideLoading();
+	}
 
 	this.update = function () {
 		popBox();
@@ -131,3 +139,5 @@ function Game (world) {
 	};
 
 }
+
+Game.CHARACTERS = ['tomato', 'lemon'];

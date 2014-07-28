@@ -54,6 +54,15 @@ function initWorld (world, game, mapType) {
 		world.removeBody(body);
 	});
 
+	// load assets
+	var spritesToLoad = []
+	for (var i in Game.CHARACTERS) {
+		var character = Game.CHARACTERS[i];
+		spritesToLoad.push('images/' + character + '.png');
+		spritesToLoad.push('images/' + character + '_2.png');
+	}
+	renderer.loadSpriteSheets(spritesToLoad, game.onLoaded);
+
 	// subscribe to ticker to advance the simulation
 	Physics.util.ticker.on(function (time, dt) {
     world.step(time);

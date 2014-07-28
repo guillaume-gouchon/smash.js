@@ -1,4 +1,4 @@
-function Input(callbacks) {
+function Input(game, callbacks) {
 
 	var KEYS_MAP = {
 		player1: {
@@ -38,6 +38,8 @@ function Input(callbacks) {
 
 	// init keyboard
 	$(document).keydown(function (event) {
+		if (!game.loaded) return true;
+
 		switch(event.keyCode) {
 			case KEYS_MAP.player1.left:
 				keyboardControllers[0].updateAxisState(Controller.BUTTONS_MAP.axisHorizontal, -1);
@@ -115,6 +117,8 @@ function Input(callbacks) {
 	});
 
 	$(document).keyup(function (event) {
+		if (!game.loaded) return true;
+
 		switch(event.keyCode) {
 			case KEYS_MAP.player1.left:
 				if (keyboardControllers[0].axes[Controller.BUTTONS_MAP.axisHorizontal] == -1) {

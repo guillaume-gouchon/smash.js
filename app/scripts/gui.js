@@ -115,4 +115,11 @@ function GUI() {
 		victory.removeClass('hide');
 	};
 
+	this.hideLoading = function () {
+		$('#loading').addClass('invisible')
+		setTimeout(function () {
+			$('#loading').addClass('hide');
+		}, 500);
+	};
+
 }

@@ -9,14 +9,13 @@ Physics.body('player', 'rectangle', function (parent) {
   var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
-  var DEFAULT_CHARACTERS = ['tomato', 'lemon'];
 
   function getRandomName() {
     return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
   }
 
   function getRandomCharacter() {
-    return DEFAULT_CHARACTERS[parseInt(Math.random() * DEFAULT_CHARACTERS.length)];
+    return Game.CHARACTERS[parseInt(Math.random() * Game.CHARACTERS.length)];
   }
 
   function getStartPosition(viewport) {
@@ -59,13 +58,16 @@ Physics.body('player', 'rectangle', function (parent) {
 
       this.character = getRandomCharacter();
       
-      this.view = renderer.createDisplay('sprite', {
-        texture: 'images/' + this.character + '.png',
+      this.view = renderer.createDisplay('movieclip', {
+        // texture: 'images/' + this.character + '.png',
         anchor: {
           x: 0.5,
           y: 0.5
-        }
+        },
+        frames: ['images/' + this.character + '.png', 'images/' + this.character + '_2.png'],
       });
+      this.view.animationSpeed = 0.1;
+      this.view.play();
     },
 
     moveLeft: function () {
@@ -306,7 +308,7 @@ Physics.behavior('player-behavior', function (parent) {
             }
           } else if (element.gameType == 'player' || element.gameType == 'decor') {
             // reset jump when on a platform
-            if (Math.abs(col.norm.y) > 0.3 && element.state.pos.y > player.state.pos.y) {
+            if (player.enabled && Math.abs(col.norm.y) > 0.3 && element.state.pos.y > player.state.pos.y) {
               player.resetJump();
               player.state.angular.acc = 0;
               player.state.angular.vel = 0;
