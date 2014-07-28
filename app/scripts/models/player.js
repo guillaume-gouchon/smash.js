@@ -175,14 +175,35 @@ Physics.body('player', 'rectangle', function (parent) {
       this.currentJump = 0;
       this.currentBomb = 0;
       if (this.life > 0) {
-      var startPosition = getStartPosition(this._world._renderer.el);
+        var startPosition = getStartPosition(this._world._renderer.el);
         this.state.pos.set(startPosition.x, startPosition.y);
+        this.animateRepop();
       }
       this.state.acc.set(0, 0);
       this.state.vel.set(0, 0);
       this.state.angular.pos = 0;
       this.state.angular.vel = 0;
       this.state.angular.acc = 0;
+    },
+
+    animateRepop: function () {
+      // var animation = Physics.geometry('circle', {
+      //   treatment: 'static',
+      //   x: this.state.pos.x,
+      //   y: this.state.pos.y,
+      //   radius: 10,
+      //   restitution: 0,
+      //   styles: {
+      //     lineWidth: 4,
+      //     strokeStyle: '#8b5c22',
+      //     fillStyle: '#cd9945'
+      //   }
+      // });
+      // var world = this._world;
+      // world.add(animation);
+      // setTimeout(function () {
+      //   world.removeBody(animation);
+      // }, 800);
     },
 
     die: function () {
