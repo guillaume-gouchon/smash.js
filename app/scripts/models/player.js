@@ -27,7 +27,7 @@ Physics.body('player', 'rectangle', function (parent) {
 
   return {
 
-   init: function (options) {
+    init: function (options) {
       var startPosition = getStartPosition(options.viewport);
       var defaults = {
         gameType: 'player',
@@ -42,21 +42,13 @@ Physics.body('player', 'rectangle', function (parent) {
 
       parent.init.call(this, $.extend({}, defaults, options));
 
-      this.life = START_LIFE;
       this.name = getRandomName();
-      this.commands = new Controller(this.id).toJSON();
-      this.currentJump = 0;
-      this.currentBomb = 0;
-      this.orientation = 1;
-      this.speed = 0.2;
-      this.nbJumps = 2;
-      this.jumpSkill = 0.25;
-      this.nbBombs = 1;
-      this.chargeAttack = -1;
-      this.chargeJump = -1;
-      this.enabled = true;
-
       this.character = getRandomCharacter();
+      this.commands = new Controller(this.id).toJSON();
+      this.enabled = true;
+      this.life = START_LIFE;
+
+      this.resetCaracteristics();
       
       this.view = renderer.createDisplay('movieclip', {
         // texture: 'images/' + this.character + '.png',
@@ -68,6 +60,20 @@ Physics.body('player', 'rectangle', function (parent) {
       });
       this.view.animationSpeed = 0.1;
       this.view.play();
+    },
+
+    resetCaracteristics: function () {
+      this.currentJump = 0;
+      this.currentBomb = 0;
+      this.orientation = 1;
+      this.speed = 0.2;
+      this.nbJumps = 2;
+      this.jumpSkill = 0.25;
+      this.nbBombs = 1;
+      this.chargeAttack = -1;
+      this.chargeJump = -1;
+      this.weapon = null;
+      this.buff = null;
     },
 
     moveLeft: function () {
@@ -144,7 +150,7 @@ Physics.body('player', 'rectangle', function (parent) {
     openBox: function (box) {
       console.log('whooohooo, a box !')
       box.explode();
-      this.animateGetItem();
+      this.receiveItem();
     },
 
     updateTeam: function (team) {
@@ -180,8 +186,7 @@ Physics.body('player', 'rectangle', function (parent) {
         this.updateLife(this.life - 1);
       }
       this.updateMass(INITIAL_MASS);
-      this.currentJump = 0;
-      this.currentBomb = 0;
+      this.resetCaracteristics();
       if (this.life > 0) {
         var startPosition = getStartPosition(this.viewport);
         this.state.pos.set(startPosition.x, startPosition.y);
@@ -218,8 +223,22 @@ Physics.body('player', 'rectangle', function (parent) {
         .start();
     },
 
-    animateGetItem: function () {
-      var anim = PIXI.Sprite.fromImage("images/" + this.character + ".png");
+    receiveItem: function () {
+      var item = Item.pickRandomItem();
+      switch (item.type) {
+        case Item.Types.WEAPON:
+          this.weapon = item;
+          break;
+        case Item.Types.BUFF:
+          item.applyBuff(this);
+          break;
+      }
+      this.animateReceivedItem(item);
+      // TODO update GUI
+    },
+
+    animateReceivedItem: function (item) {
+      var anim = PIXI.Sprite.fromImage("images/items/" + item.image);
       anim.alpha = 0.4;
       anim.anchor = {
         x: 0.5,
@@ -247,11 +266,13 @@ Physics.body('player', 'rectangle', function (parent) {
       if (!this.hidden) {
         console.log('Aaaaargh !');
         this.hidden = true;
+        this.enabled = false;
         this.reset(false);
         if (this.life > 0) {
           var _this = this;
           setTimeout(function () {
             _this.animateRepop();
+            _this.enabled = true;
             _this.hidden = false;  
           }, 1000);
         }

@@ -1,4 +1,4 @@
-function GUI() {
+function GUI () {
 
 	var DEFAULT_TEAM_COLORS = ['red', 'blue', 'green', 'yellow'];
 
