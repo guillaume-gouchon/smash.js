@@ -44,7 +44,7 @@ Physics.body('bomb', 'circle', function (parent) {
         width = r * Math.random();
         height = r * Math.random();
         d = Physics.body('convex-polygon', {
-            gameType: 'explosion',
+            gameType: 'damage',
             x: pos.get(0),
             y: pos.get(1),
             vx: Math.random() - 0.5,

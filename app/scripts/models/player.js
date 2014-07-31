@@ -73,7 +73,13 @@ Physics.body('player', 'rectangle', function (parent) {
       this.chargeAttack = -1;
       this.chargeJump = -1;
       this.weapon = null;
-      this.buff = null;
+      if (this.buff) {
+        this.buff.destroy();
+        this.buff = null;
+      }
+      if (this.weapon) {
+        this.weapon.unequip();
+      }
     },
 
     moveLeft: function () {
@@ -101,30 +107,34 @@ Physics.body('player', 'rectangle', function (parent) {
         var power = 0.2 + (new Date().getTime() - this.chargeAttack) / 1000;
         this.chargeAttack = -1;
 
-        var world = this._world;
-        var pos = this.state.pos;
-        var scratch = Physics.scratchpad();
-        var rnd = scratch.vector();
-        rnd.set(this.orientation * 20, -0.7 * 20);        
+        if (this.weapon) {
+          this.weapon.attack(this, power);
+        }
 
-        var bomb = Physics.body('bomb', {
-          x: this.state.pos.get(0),
-          y: this.state.pos.get(1),
-          image: this.character
-        });
-        bomb.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
-        bomb.state.vel.set(this.orientation * power * 0.7, - 0.3 * power);
-        bomb.state.angular.vel = (Math.random() - 0.5) * 0.06;
+        // var world = this._world;
+        // var pos = this.state.pos;
+        // var scratch = Physics.scratchpad();
+        // var rnd = scratch.vector();
+        // rnd.set(this.orientation * 20, -0.7 * 20);        
 
-        var _this = this;
-        setTimeout(function() {
-          bomb.explode();
-          _this.currentBomb = _this.currentBomb - 1 < 0 ? 0 : _this.currentBomb - 1;
-        }, bomb.duration);
+        // var bomb = Physics.body('bomb', {
+        //   x: this.state.pos.get(0),
+        //   y: this.state.pos.get(1),
+        //   image: this.character
+        // });
+        // bomb.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
+        // bomb.state.vel.set(this.orientation * power * 0.7, - 0.3 * power);
+        // bomb.state.angular.vel = (Math.random() - 0.5) * 0.06;
 
-        this.currentBomb++;
-        world.add(bomb);
-        scratch.done();
+        // var _this = this;
+        // setTimeout(function() {
+        //   bomb.explode();
+        //   _this.currentBomb = _this.currentBomb - 1 < 0 ? 0 : _this.currentBomb - 1;
+        // }, bomb.duration);
+
+        // this.currentBomb++;
+        // world.add(bomb);
+        // scratch.done();
       }
     },
 
@@ -148,7 +158,6 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     openBox: function (box) {
-      console.log('whooohooo, a box !')
       box.explode();
       this.receiveItem();
     },
@@ -227,7 +236,7 @@ Physics.body('player', 'rectangle', function (parent) {
       var item = Item.pickRandomItem();
       switch (item.type) {
         case Item.Types.WEAPON:
-          this.weapon = item;
+          item.equip(this);
           break;
         case Item.Types.BUFF:
           item.applyBuff(this);
@@ -237,9 +246,18 @@ Physics.body('player', 'rectangle', function (parent) {
       // TODO update GUI
     },
 
+    takeDamage: function (power, stun) {
+      this.updateMass(Math.max(0.001, this.mass / power));
+      this.setEnabled(false);
+      var _this = this;
+      setTimeout(function () {
+        _this.setEnabled(true);
+      }, stun);
+    },
+
     animateReceivedItem: function (item) {
       var anim = PIXI.Sprite.fromImage("images/items/" + item.image);
-      anim.alpha = 0.4;
+      anim.alpha = 0.8;
       anim.anchor = {
         x: 0.5,
         y: 0.5
@@ -335,13 +353,16 @@ Physics.behavior('player-behavior', function (parent) {
               player.state.angular.vel = 0;
               player.state.angular.pos = 0;
             }
-          } else if (element.gameType == 'explosion') {
-            // take damage
-            player.updateMass(Math.max(0.001, player.mass / element.power));
-            player.setEnabled(false);
-            setTimeout(function () {
-              player.setEnabled(true);
-            }, 800);
+          } else if (element.gameType == 'damage') {
+            player.takeDamage(element.power, element.stun);
+          } else if (element.gameType == 'drop_weapon') {
+            player.takeDamage(element.power, element.stun);
+            element.explode();
+          }
+        } else if (player.buff != null && col.bodyA === player.buff || col.bodyB === player.buff) {// shield
+          element = col.bodyA != player.buff ? col.bodyA : col.bodyB;
+          if (element.gameType == 'damage') {
+            player.buff.takeDamage(element.power);
           }
         }
       }

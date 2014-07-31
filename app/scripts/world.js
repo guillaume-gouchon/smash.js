@@ -2,6 +2,8 @@ var renderer;
 
 function initWorld (world, game, mapType) {
 
+	world.bodies = [];
+
 	// setup viewport
 	var viewport = {
     el: 'viewport',
@@ -28,7 +30,9 @@ function initWorld (world, game, mapType) {
 
 	
   // create map
-  world.add(new Map(mapType, viewport));
+  var map = new Map(mapType, viewport);
+  world.add(map);
+  world.bodies.push(map);
 
 	// ensure objects bounce when edge collision is detected
 	world.add(Physics.behavior('body-impulse-response'));

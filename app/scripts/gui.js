@@ -20,6 +20,7 @@ function GUI () {
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<strong class="name">' + player.name + '</strong>'
+	        + '<div class="items"></div>'
 	        + '<strong class="mass ' + getMassColor(getMassPercent(player.mass)) + '">' + getMassPercent(player.mass) + '%</strong>'
 	      + '</div>';
 	};
@@ -106,7 +107,7 @@ function GUI () {
 	};
 
 	this.showRoundStart = function (callback) {
-		roundStartAnimation(['Round starts in', '3', '2', '1', 'GO !'], 800, 200, callback);
+		roundStartAnimation(['Round starts in', '3', '2', '1', 'GO !'], 700, 200, callback);
 	};
 
 	this.showVictory = function (player) {
@@ -120,6 +121,20 @@ function GUI () {
 		setTimeout(function () {
 			$('#loading').addClass('hide');
 		}, 500);
+	};
+
+	this.addItem = function (player) {
+		var weapon = player.weapon;
+		$('.items', getPlayerElement(player.id)).html('<span class="ammo">' + weapon.ammo + ' x</span><img src="images/items/' + weapon.image + '"/>');
+	};
+
+	this.updateItem = function (player) {
+		var weapon = player.weapon;
+		$('.items .ammo', getPlayerElement(player.id)).html(weapon.ammo + ' x');
+	};
+
+	this.removeItem = function (player) {
+		$('.items', getPlayerElement(player.id)).html('');
 	};
 
 }

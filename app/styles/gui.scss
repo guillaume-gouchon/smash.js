@@ -42,11 +42,24 @@
 			transform: scale(0.1);	
 		}
 
-		strong {
+		strong, .items {
 			display: inline-block;
 			margin-left: 10px;
 			font-size: 1.0em;
 			@extend .easeTransition;
+		}
+
+		.items {
+			min-width: 55px;
+
+			.ammo {
+				vertical-align: bottom;
+				line-height: 30px;
+				color: #000;
+				font-size: 0.8em;
+				margin-right: 3px;
+				opacity: 0.5;
+			}
 		}
 
 		.name {

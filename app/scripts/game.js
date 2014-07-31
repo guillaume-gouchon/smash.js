@@ -62,7 +62,7 @@ function Game (world) {
 	};
 
 	var popBox = function () {
-		if (Math.random() < 0.003) {
+		if (Math.random() < 0.01) {
 			var element = Physics.body('box', {
 		    x: (world._renderer.renderer.width + 600 * (2 * Math.random() - 1)) / 2,
 		    y: 0
@@ -134,6 +134,15 @@ function Game (world) {
 				break;
 			case 'mass':
 				gui.updateMass(data.target);
+				break;
+			case 'item_add':
+				gui.addItem(data.target);
+				break;
+			case 'item_remove':
+				gui.removeItem(data.target);
+				break;
+			case 'item_update':
+				gui.updateItem(data.target);
 				break;
 		}
 	};
