@@ -4,7 +4,7 @@ Physics.body('drop-weapon', 'rectangle', function (parent) {
     
     init: function (options) {
       var defaults = {
-        gameType: 'drop_weapon',
+        gameType: 'explosive',
         width: 38,
         height: 15,
         restitution: 0.0,
@@ -59,7 +59,8 @@ Physics.body('drop-weapon', 'rectangle', function (parent) {
               strokeStyle: 0xFF8E0D,
               fillStyle: 0xff0000
             },
-            power: this.power
+            power: this.power,
+            stun: this.stun
         });
         debris.push(d);
       }

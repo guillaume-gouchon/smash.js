@@ -72,7 +72,6 @@ Physics.body('player', 'rectangle', function (parent) {
       this.nbBombs = 1;
       this.chargeAttack = -1;
       this.chargeJump = -1;
-      this.weapon = null;
       if (this.buff) {
         this.buff.destroy();
         this.buff = null;
@@ -108,33 +107,8 @@ Physics.body('player', 'rectangle', function (parent) {
         this.chargeAttack = -1;
 
         if (this.weapon) {
-          this.weapon.attack(this, power);
+          this.weapon.attack(power);
         }
-
-        // var world = this._world;
-        // var pos = this.state.pos;
-        // var scratch = Physics.scratchpad();
-        // var rnd = scratch.vector();
-        // rnd.set(this.orientation * 20, -0.7 * 20);        
-
-        // var bomb = Physics.body('bomb', {
-        //   x: this.state.pos.get(0),
-        //   y: this.state.pos.get(1),
-        //   image: this.character
-        // });
-        // bomb.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
-        // bomb.state.vel.set(this.orientation * power * 0.7, - 0.3 * power);
-        // bomb.state.angular.vel = (Math.random() - 0.5) * 0.06;
-
-        // var _this = this;
-        // setTimeout(function() {
-        //   bomb.explode();
-        //   _this.currentBomb = _this.currentBomb - 1 < 0 ? 0 : _this.currentBomb - 1;
-        // }, bomb.duration);
-
-        // this.currentBomb++;
-        // world.add(bomb);
-        // scratch.done();
       }
     },
 
@@ -158,8 +132,12 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     openBox: function (box) {
-      box.explode();
-      this.receiveItem();
+      if (box.isTrap) {
+        box.explode();
+      } else {
+        box.open();
+        this.receiveItem();
+      }
     },
 
     updateTeam: function (team) {
@@ -247,7 +225,7 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     takeDamage: function (power, stun) {
-      this.updateMass(Math.max(0.001, this.mass / power));
+      this.updateMass(Math.max(0.001, this.mass / power / 10));
       this.setEnabled(false);
       var _this = this;
       setTimeout(function () {
@@ -355,15 +333,27 @@ Physics.behavior('player-behavior', function (parent) {
             }
           } else if (element.gameType == 'damage') {
             player.takeDamage(element.power, element.stun);
-          } else if (element.gameType == 'drop_weapon') {
+          } else if (element.gameType == 'explosive') {
             player.takeDamage(element.power, element.stun);
+            element.explode();
+          } else if (element.gameType == 'bolter') {
+            player.takeDamage(element.power);
             element.explode();
           }
         } else if (player.buff != null && col.bodyA === player.buff || col.bodyB === player.buff) {// shield
           element = col.bodyA != player.buff ? col.bodyA : col.bodyB;
           if (element.gameType == 'damage') {
             player.buff.takeDamage(element.power);
+          } else if (element.gameType == 'explosive') {
+            player.buff.takeDamage(element.power);
+            element.explode();
+          } else if (element.gameType == 'bolter') {
+            player.buff.takeDamage(element.power);
+            element.explode();
           }
+        } else if (col.bodyA.gameType === 'bolter' || col.bodyB.gameType === 'bolter') {
+          element = col.bodyA.gameType === 'bolter' ? col.bodyA : col.bodyB;
+          element.explode();
         }
       }
     },

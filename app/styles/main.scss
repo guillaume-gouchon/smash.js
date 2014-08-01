@@ -166,12 +166,12 @@ button {
 				margin-left: 35px;
 				color: #111;
 
-				&.buttonX {
-					background: $blue;
-				}
-
 				&.buttonA {
 					background: $green;
+				}
+
+				&.buttonB {
+					background: $red;
 				}
 			}
 		}

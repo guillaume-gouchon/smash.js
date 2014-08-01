@@ -23,7 +23,13 @@ Physics.body('shield', 'convex-polygon', function (parent) {
 
       parent.init.call(this, $.extend({}, defaults, options));
 
-      this.power = options.power;
+      this.view = renderer.createDisplay('sprite', {
+        texture: 'images/shield.png',
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        }
+      });
     },
 
     takeDamage: function (damage) {
@@ -34,7 +40,9 @@ Physics.body('shield', 'convex-polygon', function (parent) {
     },
 
     destroy: function () {
-      this._world.emit('removeBody', this);
+      if (this._world) {
+        this._world.emit('removeBody', this);
+      }
     }
   }
   
@@ -57,7 +65,7 @@ Physics.behavior('shield-behavior', function (parent) {
     behave: function (data) {
       this.shield.state.pos.y = this.player.state.pos.y;
       this.shield.state.pos.x =  this.player.state.pos.x + this.player.orientation * 30;
-      this.shield.state.angular.pos = this.player.orientation == 1 ? -0.15 : Math.PI + 0.15;
+      this.shield.state.angular.pos = this.player.orientation == 1 ? 0 : Math.PI;
       this.shield.recalc();
     }
   };

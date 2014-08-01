@@ -16,7 +16,7 @@ function initWorld (world, game, mapType) {
 	world.add(renderer);
 
 	// add borders
-	var viewportBounds = Physics.aabb(0, -100, viewport.width, viewport.height + 200);
+	var viewportBounds = Physics.aabb(-100, -100, viewport.width + 200, viewport.height + 200);
   world.add(Physics.behavior('border-behaviour', {
       aabb: viewportBounds
   }));

@@ -21,9 +21,13 @@ Physics.body('box', 'rectangle', function (parent) {
           y: 0.5
         }
       });
+
+      this.isTrap = Math.random() < 0.15;
+      this.power = 40;
+      this.stun = 300;
     },
 
-    explode: function () {
+    open: function () {
       var world = this._world;
 
       var scratch = Physics.scratchpad();
@@ -75,7 +79,63 @@ Physics.body('box', 'rectangle', function (parent) {
       world.add(debris);
       world.emit('removeBody', this);
       scratch.done();
+    },
+
+    explode: function () {
+      var world = this._world;
+      if (!world) {
+        return;
+      }
+      var pos = this.state.pos
+      ,n = 20
+      ,r = 5
+      ,mass = 0.05
+      ,d
+      ,width
+      ,height
+      ,debris = [];
+
+      // create debris
+      while ( n-- ){
+        width = r * Math.random();
+        height = r * Math.random();
+        d = Physics.body('convex-polygon', {
+            gameType: 'damage',
+            x: pos.get(0),
+            y: pos.get(1),
+            vx: Math.random() - 0.5,
+            vy: Math.random() - 0.5,
+            vertices: [
+              {x: 0, y: 0},
+              {x: width, y: 0},
+              {x: width, y: height},
+              {x: 0, y: height}
+            ],
+            mass: mass,
+            restitution: 0.9,
+            styles: {
+              lineWidth: 3,
+              strokeStyle: 0xFF8E0D,
+              fillStyle: 0xff0000
+            },
+            power: this.power
+        });
+        debris.push(d);
+      }
+
+      setTimeout(function() {
+        if (world && debris) {
+          for (var i = 0, l = debris.length; i < l; ++i) {
+            world.emit('removeBody', debris[i]);
+          }
+          debris = undefined;
+        }
+      }, 500);
+
+      world.add(debris);
+      world.emit('removeBody', this);
     }
+
   };
   
 });

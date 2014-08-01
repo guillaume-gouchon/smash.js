@@ -20,8 +20,8 @@ function GUI () {
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<strong class="name">' + player.name + '</strong>'
-	        + '<div class="items"></div>'
 	        + '<strong class="mass ' + getMassColor(getMassPercent(player.mass)) + '">' + getMassPercent(player.mass) + '%</strong>'
+	        + '<div class="items invisible"></div>'
 	      + '</div>';
 	};
 
@@ -125,16 +125,19 @@ function GUI () {
 
 	this.addItem = function (player) {
 		var weapon = player.weapon;
-		$('.items', getPlayerElement(player.id)).html('<span class="ammo">' + weapon.ammo + ' x</span><img src="images/items/' + weapon.image + '"/>');
+		$('.items', getPlayerElement(player.id)).addClass('invisible').html('<img src="images/items/' + weapon.image + '"/>').attr('data-content', weapon.ammo);
+		setTimeout(function () {
+			$('.items', getPlayerElement(player.id)).removeClass('invisible');
+		}, 100);
 	};
 
 	this.updateItem = function (player) {
 		var weapon = player.weapon;
-		$('.items .ammo', getPlayerElement(player.id)).html(weapon.ammo + ' x');
+		$('.items', getPlayerElement(player.id)).attr('data-content', weapon.ammo);
 	};
 
 	this.removeItem = function (player) {
-		$('.items', getPlayerElement(player.id)).html('');
+		$('.items', getPlayerElement(player.id)).html('').attr('data-content', '');
 	};
 
 }

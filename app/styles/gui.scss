@@ -42,7 +42,7 @@
 			transform: scale(0.1);	
 		}
 
-		strong, .items {
+		strong {
 			display: inline-block;
 			margin-left: 10px;
 			font-size: 1.0em;
@@ -50,15 +50,27 @@
 		}
 
 		.items {
-			min-width: 55px;
+			float: right;
+			position: relative;
+			left: 25px;
+			display: inline-block;
+			font-size: 1.0em;
+			@extend .easeTransition;
+			width: 0px;
+			opacity: 0.8;
 
-			.ammo {
-				vertical-align: bottom;
-				line-height: 30px;
+			&.invisible {
+				opacity: 0;
+			}
+
+			&:before {
+				content: attr(data-content);
+				position: absolute;
+				width: 30px;
 				color: #000;
-				font-size: 0.8em;
-				margin-right: 3px;
-				opacity: 0.5;
+				font-size: 1.2em;
+				opacity: 0.6;
+				text-align: center;
 			}
 		}
 

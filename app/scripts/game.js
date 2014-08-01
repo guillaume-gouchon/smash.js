@@ -21,7 +21,7 @@ function Game (world) {
     },
 
     playerConnected: function (playerId, padType) {
-    	if (_this.loaded && players.playerId == null) {
+    	if (_this.loaded && players[playerId] == null) {
     		addPlayer(playerId);
     	}
     },
@@ -62,9 +62,9 @@ function Game (world) {
 	};
 
 	var popBox = function () {
-		if (Math.random() < 0.01) {
+		if (Math.random() < 0.005) {
 			var element = Physics.body('box', {
-		    x: (world._renderer.renderer.width + 600 * (2 * Math.random() - 1)) / 2,
+		    x: (world._renderer.renderer.width + 550 * (2 * Math.random() - 1)) / 2,
 		    y: 0
 		  });
 			world.add(element);
