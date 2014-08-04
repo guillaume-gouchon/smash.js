@@ -5,7 +5,6 @@
 Physics.body('player', 'rectangle', function (parent) {
 
   var START_LIFE = 3;
-  var INITIAL_MASS = 1.0;
   var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
@@ -32,10 +31,10 @@ Physics.body('player', 'rectangle', function (parent) {
       var defaults = {
         gameType: 'player',
         restitution: 0.2,
-        cof: 0.3,
+        cof: 1.0,
         height: 30,
         width: 30,
-        mass: INITIAL_MASS,
+        mass: 1.0,
         x: startPosition.x,
         y: startPosition.y
       };
@@ -47,19 +46,24 @@ Physics.body('player', 'rectangle', function (parent) {
       this.commands = new Controller(this.id).toJSON();
       this.enabled = true;
       this.life = START_LIFE;
+      this.damage = 0;
 
       this.resetCaracteristics();
       
       this.view = renderer.createDisplay('movieclip', {
-        // texture: 'images/' + this.character + '.png',
+        frames: ['images/' + this.character + '.png', 'images/' + this.character + '_2.png'],
         anchor: {
           x: 0.5,
           y: 0.5
-        },
-        frames: ['images/' + this.character + '.png', 'images/' + this.character + '_2.png'],
+        }
       });
       this.view.animationSpeed = 0.1;
       this.view.play();
+
+      this.view.scale.x = -1;
+
+      this.movingLeft = false;
+      this.movingRight = false;
     },
 
     resetCaracteristics: function () {
@@ -84,15 +88,25 @@ Physics.body('player', 'rectangle', function (parent) {
     moveLeft: function () {
       this.state.vel.x = -this.speed;
       this.orientation = -1;
+      this.view.scale.x = 1;
+      this.movingLeft = true;
+      this.movingRight = false;
     },
 
     moveRight: function () {
       this.state.vel.x = this.speed;
       this.orientation = 1;
+      this.view.scale.x = -1;
+      this.movingLeft = false;
+      this.movingRight = true;
     },
 
     stop: function () {
-      this.state.vel.x = 0;
+      if (this.movingLeft || this.movingRight) {
+        this.state.vel.x = 0;
+        this.movingLeft = false;
+        this.movingRight = false;
+      }
     },
 
     attack: function () {
@@ -120,7 +134,7 @@ Physics.body('player', 'rectangle', function (parent) {
         this.currentJump++;
         this.state.vel.y = - this.jumpSkill;
         this.state.angular.vel = (Math.random() < 0.5 ? -1 : 1) * 0.008;
-      }   
+      }
     },
 
     releaseJump: function () {
@@ -148,11 +162,10 @@ Physics.body('player', 'rectangle', function (parent) {
       });
     },
 
-    updateMass: function (mass) {
-      this.mass = mass;
-      this.recalc();
+    updateDamage: function (damage) {
+      this.damage = damage;
       this._world.emit('updateGUI', {
-        type: 'mass',
+        type: 'damage',
         target: this
       });
     },
@@ -172,7 +185,7 @@ Physics.body('player', 'rectangle', function (parent) {
       } else {
         this.updateLife(this.life - 1);
       }
-      this.updateMass(INITIAL_MASS);
+      this.updateDamage(0);
       this.resetCaracteristics();
       if (this.life > 0) {
         var startPosition = getStartPosition(this.viewport);
@@ -224,13 +237,15 @@ Physics.body('player', 'rectangle', function (parent) {
       // TODO update GUI
     },
 
-    takeDamage: function (power, stun) {
-      this.updateMass(Math.max(0.001, this.mass / power / 10));
-      this.setEnabled(false);
+    takeDamage: function (norm, power, stun) {
       var _this = this;
       setTimeout(function () {
         _this.setEnabled(true);
       }, stun);
+      this.updateDamage(this.damage + power);
+      var vector = new Physics.vector(norm.x * power * 0.0004 * (1 + this.damage / 100), (norm.y == 0 ? -0.4 : norm.y) * power * 0.0004 * (1 + this.damage / 100));
+      this.accelerate(vector);
+      this.setEnabled(false);
     },
 
     animateReceivedItem: function (item) {
@@ -260,15 +275,14 @@ Physics.body('player', 'rectangle', function (parent) {
 
     die: function () {
       if (!this.hidden) {
-        console.log('Aaaaargh !');
         this.hidden = true;
-        this.enabled = false;
+        this.setEnabled(false);
         this.reset(false);
         if (this.life > 0) {
           var _this = this;
           setTimeout(function () {
             _this.animateRepop();
-            _this.enabled = true;
+            _this.setEnabled(true);
             _this.hidden = false;  
           }, 1000);
         }
@@ -278,6 +292,28 @@ Physics.body('player', 'rectangle', function (parent) {
 
     setEnabled: function(enabled) {
       this.enabled = enabled;
+      if (!enabled) {
+        if (this.injured == null) {
+          var _this = this;
+          this.injured = new TWEEN.Tween( { x: 0.5 }, 150)
+          .to( { x: 0.8 })
+          .delay(0)
+          .yoyo( true )
+          .repeat( Infinity )
+          .onUpdate(function () {
+              _this.view.scale.x = this.x;
+              _this.view.scale.y = this.x;
+          });
+          this.injured.start();
+        }
+      } else {
+        if (this.injured != null) {
+          this.injured.stop();
+          this.injured = null;
+        }
+        this.view.scale.x = -this.orientation;
+        this.view.scale.y = 1;
+      }
     },
   };
 
@@ -318,6 +354,10 @@ Physics.behavior('player-behavior', function (parent) {
         col = collisions[i];
         if (col.bodyA === player || col.bodyB === player) {
           element = col.bodyA != player ? col.bodyA : col.bodyB;
+          if (player == col.bodyA) {
+            col.norm.x *= -1;
+            col.norm.y *= -1;
+          }
           if (element.gameType === 'box') {
             // collision with a box
             if (Math.abs(col.norm.y) > 0.3 && Math.abs(col.norm.x) < 0.3) {
@@ -332,12 +372,14 @@ Physics.behavior('player-behavior', function (parent) {
               player.state.angular.pos = 0;
             }
           } else if (element.gameType == 'damage') {
-            player.takeDamage(element.power, element.stun);
+            if (element.player != player) { // avoid contact weapon to damage their bearer
+              player.takeDamage(col.norm, element.power, element.stun);
+            }
           } else if (element.gameType == 'explosive') {
-            player.takeDamage(element.power, element.stun);
+            player.takeDamage(col.norm, element.power, element.stun);
             element.explode();
           } else if (element.gameType == 'bolter') {
-            player.takeDamage(element.power);
+            player.takeDamage(col.norm, element.power, element.stun);
             element.explode();
           }
         } else if (player.buff != null && col.bodyA === player.buff || col.bodyB === player.buff) {// shield

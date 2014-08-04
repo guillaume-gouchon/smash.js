@@ -23,7 +23,7 @@ Physics.body('box', 'rectangle', function (parent) {
       });
 
       this.isTrap = Math.random() < 0.15;
-      this.power = 40;
+      this.power = 20;
       this.stun = 300;
     },
 

@@ -132,8 +132,8 @@ function Game (world) {
 			case 'team':
 				gui.updateTeam(data.target);
 				break;
-			case 'mass':
-				gui.updateMass(data.target);
+			case 'damage':
+				gui.updateDamage(data.target);
 				break;
 			case 'item_add':
 				gui.addItem(data.target);

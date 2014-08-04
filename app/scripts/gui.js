@@ -2,12 +2,12 @@ function GUI () {
 
 	var DEFAULT_TEAM_COLORS = ['red', 'blue', 'green', 'yellow'];
 
-	var getMassColor = function (percentage) {
-		if (percentage < 40) {
+	var getDamageColor = function (damage) {
+		if (damage < 40) {
 			return 'high';
-		} else if (percentage < 80) {
+		} else if (damage < 80) {
 			return 'medium';
-		} else if (percentage < 120) {
+		} else if (damage < 120) {
 			return 'low';
 		} else {
 			return 'lowest';
@@ -20,13 +20,9 @@ function GUI () {
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<img src="images/' + player.character + '.png"/>'
 	        + '<strong class="name">' + player.name + '</strong>'
-	        + '<strong class="mass ' + getMassColor(getMassPercent(player.mass)) + '">' + getMassPercent(player.mass) + '%</strong>'
+	        + '<strong class="damage ' + getDamageColor(player.damage) + '">' + player.damage + '%</strong>'
 	        + '<div class="items invisible"></div>'
 	      + '</div>';
-	};
-
-	var getMassPercent = function (mass) {
-		return Math.round(1 / mass - 1);
 	};
 
 	var getPlayerElement = function (playerId) {
@@ -90,13 +86,12 @@ function GUI () {
 		}
 	};
 
-	this.updateMass = function (player) {
+	this.updateDamage = function (player) {
 		var playerElement = getPlayerElement(player.id);
-		var massElement = $('.mass', playerElement);
-		var percent = getMassPercent(player.mass);
-		massElement.html(percent + '%');
+		var massElement = $('.damage', playerElement);
+		massElement.html(player.damage + '%');
 		massElement.removeClass('lowest low medium high');
-		massElement.addClass(getMassColor(percent));
+		massElement.addClass(getDamageColor(player.damage));
 	};
 
 	this.updateTeam = function (player) {

@@ -19,17 +19,17 @@ Item.pickRandomItem = function () {
 		new Buff(2, 'medical-pack.png'),
 		new Buff(3, 'muscle-up.png'),
 		new Weapon('wolf-trap.png', Weapon.Types.DROP, 30, 1000, 2),
-		new Weapon('land-mine.png', Weapon.Types.DROP, 100, 500, 3),
-		new Weapon('axe.png', Weapon.Types.CONTACT, 40, 200, null),
-		new Weapon('trefoil-shuriken.png', Weapon.Types.THROW, 60, 400, 7, 'explosive', 3000),
-		new Weapon('bomb.png', Weapon.Types.THROW, 80, 500, 5, 'bomb', 1000),
-		new Weapon('flash-grenade.png', Weapon.Types.THROW, 80, 3000, 3, 'bomb', 1500),
-		new Weapon('pistol.png', Weapon.Types.GUN, 30, 300, 20),
-		new Weapon('bolter-gun.png', Weapon.Types.GUN, 50, 100, 35, 'bolter'),
-		new Weapon('minigun.png', Weapon.Types.GUN, 80, 80, 100),
+		new Weapon('land-mine.png', Weapon.Types.DROP, 80, 500, 3),
+		new Weapon('axe.png', Weapon.Types.CONTACT, 60, 200, null),
+		new Weapon('trefoil-shuriken.png', Weapon.Types.THROW, 70, 400, 7, 'explosive', 3000),
+		new Weapon('bomb.png', Weapon.Types.THROW, 25, 500, 5, 'bomb', 1000),
+		new Weapon('flash-grenade.png', Weapon.Types.THROW, 5, 3000, 3, 'bomb', 1500),
+		new Weapon('pistol.png', Weapon.Types.GUN, 15, 300, 20),
+		new Weapon('bolter-gun.png', Weapon.Types.GUN, 15, 100, 35, 'bolter'),
+		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 100),
 	];
 	return items[parseInt(items.length * Math.random())];
-	// return items[11];
+	// return items[6];
 };
 
 
@@ -49,7 +49,7 @@ function Buff (id, image) {
 				var shield = Physics.body('shield', {
 			    x: player.state.pos.x + player.orientation * 20,
 			    y: player.state.pos.y,
-			    power: 50
+			    power: 150
 				});
 	      player._world.add([
 	      	shield, 
@@ -66,11 +66,11 @@ function Buff (id, image) {
 				break;
 			case 2:
 				// health
-				player.updateMass(1.0);
+				player.updateDamage(0);
 				break;
 			case 3:
 				// boost
-				player.jumpSkill *= 1.5;
+				player.jumpSkill *= 1.2;
 				player.speed *= 1.5;
 				break;
 		}
@@ -123,13 +123,36 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
           stun: stun,
 					gameType: extra
         });
-        bullet.state.pos.set(pos.get(0) + this.player.orientation * 40, pos.get(1) - 8);
+        bullet.state.pos.set(pos.get(0) + this.player.orientation * 40, pos.get(1) - 6);
         bullet.state.vel.set(this.player.orientation * 3, 0);
 
         setTimeout(function () {
           bullet.explode();
         }, 500);
         world.add(bullet);
+
+        // animate fire
+        var anim = PIXI.Sprite.fromImage("images/muzzle.png");
+	      anim.alpha = 0.8;
+	      anim.anchor = {
+	        x: 0.5,
+	        y: 0.5
+	      };
+	      anim.x = this.player.state.pos.x + this.player.orientation * 35;
+	      anim.y = this.player.state.pos.y - 6;
+	      anim.rotation = this.player.orientation > 0 ? Math.PI : 0;
+	      world._renderer.stage.addChild(anim);
+	      
+	      var tween = new TWEEN.Tween( { x: 0, y: 0 } )
+	        .to( { x: 1, y: 1 }, 100)
+	        .onUpdate(function () {
+	            anim.scale.x = this.x;
+	            anim.scale.y = this.y;
+	        })
+	        .onComplete(function () {
+	          world.emit('removeBody', anim);
+	        })
+	        .start();
 				break;
 			case Weapon.Types.CONTACT:
 				var slash = Physics.body('contact-weapon', {
@@ -137,7 +160,8 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 			    y: this.player.state.pos.y,
 			    image: this.player.orientation > 0 ? 'slash.png' : 'slash_l.png',
 			    power: power,
-			    stun: stun
+			    stun: stun,
+			    player: this.player
 				});
 				slash.view.alpha = 0.9;
 				var world = this.player._world;
@@ -150,6 +174,8 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 				this.player._world.add(Physics.body('drop-weapon', {
 					x: this.player.state.pos.x + this.player.orientation * 55,
 					y: this.player.state.pos.y,
+					vx: this.player.orientation * attackPower * 0.1,
+					vy: - 0.1 * attackPower,
 					image: image,
 					power: power,
 					stun: stun
@@ -171,7 +197,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 					gameType: extra
         });
         throwingWeapon.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
-        throwingWeapon.state.vel.set(this.player.orientation * attackPower * 0.7, - 0.3 * attackPower);
+        throwingWeapon.state.vel.set(this.player.orientation * attackPower * 1.5, - 0.2 * attackPower);
         throwingWeapon.state.angular.vel = (Math.random() - 0.5) * 0.06;
 
         setTimeout(function () {
