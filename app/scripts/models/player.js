@@ -82,6 +82,7 @@ Physics.body('player', 'rectangle', function (parent) {
       }
       if (this.weapon) {
         this.weapon.unequip();
+        Item.getBaseWeapon().equip(this);
       }
     },
 
@@ -110,6 +111,9 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     attack: function () {
+      if (this.weapon == null) {
+        Item.getBaseWeapon().equip(this);
+      }
       if (this.enabled && this.chargeAttack == -1 && this.currentBomb < this.nbBombs) {
         this.chargeAttack = new Date().getTime();
       }
@@ -234,7 +238,6 @@ Physics.body('player', 'rectangle', function (parent) {
           break;
       }
       this.animateReceivedItem(item);
-      // TODO update GUI
     },
 
     takeDamage: function (norm, power, stun) {
@@ -277,10 +280,10 @@ Physics.body('player', 'rectangle', function (parent) {
       if (!this.hidden) {
         this.hidden = true;
         this.setEnabled(false);
-        this.reset(false);
         if (this.life > 0) {
           var _this = this;
           setTimeout(function () {
+            _this.reset(false);
             _this.animateRepop();
             _this.setEnabled(true);
             _this.hidden = false;  

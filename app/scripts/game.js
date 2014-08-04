@@ -62,7 +62,7 @@ function Game (world) {
 	};
 
 	var popBox = function () {
-		if (Math.random() < 0.005) {
+		if (Math.random() < 0.006) {
 			var element = Physics.body('box', {
 		    x: (world._renderer.renderer.width + 550 * (2 * Math.random() - 1)) / 2,
 		    y: 0

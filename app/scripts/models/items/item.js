@@ -20,7 +20,7 @@ Item.pickRandomItem = function () {
 		new Buff(3, 'muscle-up.png'),
 		new Weapon('wolf-trap.png', Weapon.Types.DROP, 30, 1000, 2),
 		new Weapon('land-mine.png', Weapon.Types.DROP, 80, 500, 3),
-		new Weapon('axe.png', Weapon.Types.CONTACT, 60, 200, null),
+		new Weapon('axe.png', Weapon.Types.CONTACT, 60, 200, null, 'slash_axe'),
 		new Weapon('trefoil-shuriken.png', Weapon.Types.THROW, 70, 400, 7, 'explosive', 3000),
 		new Weapon('bomb.png', Weapon.Types.THROW, 25, 500, 5, 'bomb', 1000),
 		new Weapon('flash-grenade.png', Weapon.Types.THROW, 5, 3000, 3, 'bomb', 1500),
@@ -28,8 +28,12 @@ Item.pickRandomItem = function () {
 		new Weapon('bolter-gun.png', Weapon.Types.GUN, 15, 100, 35, 'bolter'),
 		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 100),
 	];
-	return items[parseInt(items.length * Math.random())];
+	return items[parseInt((items.length - 1) * Math.random())];
 	// return items[6];
+};
+
+Item.getBaseWeapon = function () {
+	return new Weapon(null, Weapon.Types.CONTACT, 30, 100, null, 'slash');
 };
 
 
@@ -96,10 +100,12 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 			this.player.weapon.unequip(this.player);
 		}
 		this.player.weapon = this;
-		this.player._world.emit('updateGUI', {
-			type: 'item_add',
-			target: this.player
-		});
+		if (this.image) {
+			this.player._world.emit('updateGUI', {
+				type: 'item_add',
+				target: this.player
+			});
+		}
 	};
 
 	this.unequip = function () {
@@ -107,7 +113,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 			type: 'item_remove',
 			target: this.player
 		});
-		this.player.weapon = null;
+		this.player.weapon = Item.baseWeapon;
 	};
 
 	this.attack = function (attackPower) {
@@ -158,7 +164,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 				var slash = Physics.body('contact-weapon', {
 			    x: this.player.state.pos.x + this.player.orientation * 33,
 			    y: this.player.state.pos.y,
-			    image: this.player.orientation > 0 ? 'slash.png' : 'slash_l.png',
+			    image: extra + (this.player.orientation > 0 ? '.png' : '_l.png'),
 			    power: power,
 			    stun: stun,
 			    player: this.player
