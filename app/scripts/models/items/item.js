@@ -25,8 +25,8 @@ Item.pickRandomItem = function () {
 		new Weapon('bomb.png', Weapon.Types.THROW, 25, 500, 5, 'bomb', 1000),
 		new Weapon('flash-grenade.png', Weapon.Types.THROW, 5, 3000, 3, 'bomb', 1500),
 		new Weapon('pistol.png', Weapon.Types.GUN, 15, 300, 20),
-		new Weapon('bolter-gun.png', Weapon.Types.GUN, 15, 100, 35, 'bolter'),
-		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 100),
+		new Weapon('bolter-gun.png', Weapon.Types.GUN, 15, 100, 10, 'bolter'),
+		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 40),
 	];
 	return items[parseInt((items.length - 1) * Math.random())];
 	// return items[6];

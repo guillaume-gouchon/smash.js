@@ -130,6 +130,10 @@ button {
 			background: $green;
 			border: 2px solid #333;
 			border-radius: 3px;
+
+			&.attack {
+				background: $red;
+			}
 		}
 
 		#gamepads {
