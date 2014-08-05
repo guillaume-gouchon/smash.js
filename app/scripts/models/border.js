@@ -36,8 +36,10 @@ Physics.behavior('border-behaviour', 'edge-collision-detection', function (paren
       for (var i = 0, l = collisions.length; i < l; ++i) {
         col = collisions[i];
         element = col.bodyA.gameType != null ? col.bodyA : col.bodyB;
-        if (element.gameType === 'player' || col.bodyB.gameType === 'player') {
+        if (element.gameType === 'player') {
           element.die();
+        } else if (element.gameType === 'flag') {
+          element.reset();
         } else {
           world.emit('removeBody', element);
         }

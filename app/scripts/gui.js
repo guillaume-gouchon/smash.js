@@ -1,6 +1,6 @@
 function GUI () {
 
-	var DEFAULT_TEAM_COLORS = ['red', 'blue', 'green', 'yellow'];
+	var DEFAULT_TEAM_COLORS = ['red', 'yellow', 'green', 'blue'];
 
 	var getDamageColor = function (damage) {
 		if (damage < 70) {
@@ -15,14 +15,15 @@ function GUI () {
 	};
 
 	var createPlayerElement = function (player) {
-		return '<div class="player ' + DEFAULT_TEAM_COLORS[player.team] + ' grow" data-id="' + player.id + '">'
-	        + '<img src="images/' + player.character + '.png"/>'
-	        + '<img src="images/' + player.character + '.png"/>'
-	        + '<img src="images/' + player.character + '.png"/>'
-	        + '<strong class="name">' + player.name + '</strong>'
-	        + '<strong class="damage ' + getDamageColor(player.damage) + '">' + player.damage + '%</strong>'
-	        + '<div class="items invisible"></div>'
-	      + '</div>';
+		var s = '<div class="player ' + DEFAULT_TEAM_COLORS[player.team] + ' grow" data-id="' + player.id + '">';
+		for (var i = 0; i < player.life; i++) {
+			s += '<img src="images/' + player.character + '.png"/>';
+		}
+	  s += '<strong class="name">' + player.name + '</strong>'
+      + '<strong class="damage ' + getDamageColor(player.damage) + '">' + player.damage + '%</strong>'
+      + '<div class="items invisible"></div>'
+    + '</div>';
+    return s;
 	};
 
 	var getPlayerElement = function (playerId) {

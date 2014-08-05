@@ -2,11 +2,13 @@ function Game (world) {
 	
 	var world = world;
  	var players = {};
+	var teams = [0, 0, 0, 0];
 	var gui = new GUI();
 
 	var started = false;
 
 	var _this = this;
+	
 	var input = new Input(this, {
     padNotSupported: function (padType) {
     	if (padType == Phonepad.PAD_TYPES.gamepad) {
@@ -41,9 +43,10 @@ function Game (world) {
 	var addPlayer = function (playerId) {
 		var player = Physics.body('player', {
 	    id: playerId,
-	    team: Object.keys(players).length % 4,
-	    viewport: world._renderer.renderer
+	    team: Object.keys(players).length % world.map.teams,
+	    life: world.map.life
 	  });
+	  _this.repopPlayer(player);
 		players[player.id] = player;
 	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
 		world.add([player, playerBehavior]);
@@ -70,7 +73,7 @@ function Game (world) {
 	var popBox = function () {
 		if (Math.random() < 0.006) {
 			var element = Physics.body('box', {
-		    x: (world._renderer.renderer.width + 550 * (2 * Math.random() - 1)) / 2,
+		    x: (world._renderer.renderer.width + world.map.width * (2 * Math.random() - 1)) / 2,
 		    y: 0
 		  });
 			world.add(element);
@@ -79,10 +82,15 @@ function Game (world) {
 
 	this.loaded = false;
 
+	this.repopPlayer = function (player) {
+		var viewport = world._renderer.renderer;
+		player.state.pos.set((viewport.width + world.map.width * (2 * Math.random() - 1)) / 2, Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105);
+	};
+
 	this.onLoaded = function () {
 		_this.loaded = true;
 		gui.hideLoading();
-	}
+	};
 
 	this.update = function () {
 		popBox();
@@ -90,7 +98,7 @@ function Game (world) {
 	};
 
 	this.checkVictory = function () {
-		if (started) {
+		if (started && world.map.id != 1) {
 			// check if game over
 			var playersAlive = [];
 			for (var i in players) {
@@ -131,7 +139,7 @@ function Game (world) {
 	this.updateGUI = function (data) {
 		switch(data.type) {
 			case 'life':
-				if (started) {
+				if (started && world.map.id != 1) {
 					gui.updateLife(data.target);
 				}
 				break;
@@ -153,6 +161,18 @@ function Game (world) {
 		}
 	};
 
+	this.winPoints = function (team) {
+		if (started) {
+			// update gui
+			// add animation
+			if (++teams[team] == 3) {
+				gui.showVictory('Team ' + (team + 1));
+			}
+		}
+	};
+
 }
 
-Game.CHARACTERS = ['tomato', 'lemon'];
+Game.TEAM_COLORS = ['#ED1818', '#CFCC36', '#48CF36', '#3680CF'];
+Game.TINT_COLORS = [0xED1818, 0xCFCC36, 0x48CF36,  0x3680CF];
+Game.CHARACTERS = ['tomato', 'lemon', 'tomato', 'lemon'];

@@ -4,50 +4,33 @@
 */
 Physics.body('player', 'rectangle', function (parent) {
 
-  var START_LIFE = 3;
   var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
-  var TEAM_COLORS = ['#ED1818', '#3680CF', '#48CF36', '#CFCC36'];
-  var TINT_COLORS = [0xED1818, 0x3680CF, 0x48CF36, 0xCFCC36];
 
   function getRandomName() {
     return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
   }
 
-  function getRandomCharacter() {
-    return Game.CHARACTERS[parseInt(Math.random() * Game.CHARACTERS.length)];
-  }
-
-  function getStartPosition(viewport) {
-    return {
-      x: (viewport.width + 500 * (2 * Math.random() - 1)) / 2,
-      y: Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105
-    };
-  }
-
   return {
 
     init: function (options) {
-      var startPosition = getStartPosition(options.viewport);
       var defaults = {
         gameType: 'player',
         restitution: 0.2,
         cof: 1.0,
         height: 30,
         width: 30,
-        mass: 1.0,
-        x: startPosition.x,
-        y: startPosition.y
+        mass: 1.0
       };
 
       parent.init.call(this, $.extend({}, defaults, options));
 
       this.name = getRandomName();
-      this.character = getRandomCharacter();
+      this.character = Game.CHARACTERS[this.team];
       this.commands = new Controller(this.id).toJSON();
       this.enabled = true;
-      this.life = START_LIFE;
+      this.initialLife = options.life;
       this.damage = 0;
 
       this.resetCaracteristics();
@@ -63,7 +46,6 @@ Physics.body('player', 'rectangle', function (parent) {
       this.view.play();
 
       this.view.scale.x = -1;
-      // this.view.tint = TINT_COLORS[options.team];
 
       this.movingLeft = false;
       this.movingRight = false;
@@ -85,6 +67,8 @@ Physics.body('player', 'rectangle', function (parent) {
         this.weapon.unequip();
         Item.getBaseWeapon().equip(this);
       }
+
+      this.items = [];
     },
 
     moveLeft: function () {
@@ -186,7 +170,7 @@ Physics.body('player', 'rectangle', function (parent) {
 
     reset: function (isNewGame) {
       if (isNewGame) {
-        this.updateLife(START_LIFE);
+        this.updateLife(this.initialLife);
         this.hidden = false;
       } else {
         this.updateLife(this.life - 1);
@@ -194,8 +178,7 @@ Physics.body('player', 'rectangle', function (parent) {
       this.updateDamage(0);
       this.resetCaracteristics();
       if (this.life > 0) {
-        var startPosition = getStartPosition(this.viewport);
-        this.state.pos.set(startPosition.x, startPosition.y);
+        this._world.emit('repopPlayer', this);
       }
       this.state.acc.set(0, 0);
       this.state.vel.set(0, 0);
@@ -231,7 +214,7 @@ Physics.body('player', 'rectangle', function (parent) {
 
         var animName = new PIXI.Text(this.name, {
           font: 'bold 16px Arial',
-          fill: TEAM_COLORS[this.team],
+          fill: Game.TEAM_COLORS[this.team],
           stroke: '#fff',
           strokeThickness: 5
         });
@@ -481,6 +464,8 @@ Physics.behavior('player-behavior', function (parent) {
           } else if (element.gameType == 'bolter') {
             player.takeDamage(col.norm, element.power, element.stun);
             element.explode();
+          } else if (element.gameType == 'flag') {
+            element.updateBearer(player);
           }
         } else if (player.buff != null && col.bodyA === player.buff || col.bodyB === player.buff) {// shield
           element = col.bodyA != player.buff ? col.bodyA : col.bodyB;

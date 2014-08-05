@@ -1,8 +1,6 @@
 var renderer;
 
-function initWorld (world, game, mapType) {
-
-	world.bodies = [];
+function initWorld (world, game, map) {
 
 	// setup viewport
 	var viewport = {
@@ -30,9 +28,9 @@ function initWorld (world, game, mapType) {
 
 	
   // create map
-  var map = new Map(mapType, viewport);
-  world.add(map);
-  world.bodies.push(map);
+  var mapElements = new Map(map.id, viewport);
+  world.add(mapElements);
+  world.map = map;
 
 	// ensure objects bounce when edge collision is detected
 	world.add(Physics.behavior('body-impulse-response'));
@@ -48,8 +46,10 @@ function initWorld (world, game, mapType) {
   world.add(gravity);
 
   // subscribe to events coming from logic side
+	world.on('repopPlayer', game.repopPlayer);
 	world.on('death', game.checkVictory);
 	world.on('updateGUI', game.updateGUI);
+	world.on('points', game.winPoints);
 	world.on('removeBody', function (body) {
 		try {
 			renderer.stage.removeChild(body.view != null ? body.view : body);
