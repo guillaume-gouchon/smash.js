@@ -65,8 +65,7 @@ Physics.behavior('shield-behavior', function (parent) {
     behave: function (data) {
       this.shield.state.pos.y = this.player.state.pos.y;
       this.shield.state.pos.x =  this.player.state.pos.x + this.player.orientation * 30;
-      this.shield.state.angular.pos = this.player.orientation == 1 ? 0 : Math.PI;
-      this.shield.recalc();
+      this.shield.view.scale.x = this.player.orientation == 1 ? 1 : -1;
     }
   };
 });

@@ -3,11 +3,11 @@ function GUI () {
 	var DEFAULT_TEAM_COLORS = ['red', 'blue', 'green', 'yellow'];
 
 	var getDamageColor = function (damage) {
-		if (damage < 40) {
+		if (damage < 70) {
 			return 'high';
-		} else if (damage < 80) {
+		} else if (damage < 140) {
 			return 'medium';
-		} else if (damage < 120) {
+		} else if (damage < 210) {
 			return 'low';
 		} else {
 			return 'lowest';
@@ -120,19 +120,19 @@ function GUI () {
 
 	this.addItem = function (player) {
 		var weapon = player.weapon;
-		$('.items', getPlayerElement(player.id)).addClass('invisible').html('<img src="images/items/' + weapon.image + '"/>').attr('data-content', weapon.ammo);
+		$('.items', getPlayerElement(player.id)).addClass('invisible').html('<img src="images/items/' + weapon.image + '"/>');//.attr('data-content', weapon.ammo);
 		setTimeout(function () {
 			$('.items', getPlayerElement(player.id)).removeClass('invisible');
 		}, 100);
 	};
 
 	this.updateItem = function (player) {
-		var weapon = player.weapon;
-		$('.items', getPlayerElement(player.id)).attr('data-content', weapon.ammo);
+		// var weapon = player.weapon;
+		// $('.items', getPlayerElement(player.id)).attr('data-content', weapon.ammo);
 	};
 
 	this.removeItem = function (player) {
-		$('.items', getPlayerElement(player.id)).html('').attr('data-content', '');
+		$('.items', getPlayerElement(player.id)).html('');//.attr('data-content', '');
 	};
 
 }

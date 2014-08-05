@@ -16,12 +16,15 @@ Physics.body('contact-weapon', 'rectangle', function (parent) {
       parent.init.call(this, $.extend({}, defaults, options));
 
       this.view = renderer.createDisplay('sprite', {
-        texture: 'images/' + options.image,
+        texture: 'images/slash.png',
         anchor: {
           x: 0.5,
           y: 0.5
         }
       });
+      this.view.scale.x = this.player.orientation > 0 ? 1 : -1;
+      this.view.tint = options.tint;
+      this.view.alpha = 0.9;
     }
   }
 });

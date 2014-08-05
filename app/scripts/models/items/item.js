@@ -20,7 +20,7 @@ Item.pickRandomItem = function () {
 		new Buff(3, 'muscle-up.png'),
 		new Weapon('wolf-trap.png', Weapon.Types.DROP, 30, 1000, 2),
 		new Weapon('land-mine.png', Weapon.Types.DROP, 80, 500, 3),
-		new Weapon('axe.png', Weapon.Types.CONTACT, 60, 200, null, 'slash_axe'),
+		new Weapon('axe.png', Weapon.Types.CONTACT, 60, 200, null, 0xFF0000),
 		new Weapon('trefoil-shuriken.png', Weapon.Types.THROW, 70, 400, 7, 'explosive', 3000),
 		new Weapon('bomb.png', Weapon.Types.THROW, 25, 500, 5, 'bomb', 1000),
 		new Weapon('flash-grenade.png', Weapon.Types.THROW, 5, 3000, 3, 'bomb', 1500),
@@ -29,11 +29,11 @@ Item.pickRandomItem = function () {
 		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 40),
 	];
 	return items[parseInt((items.length - 1) * Math.random())];
-	// return items[6];
+	return items[6];
 };
 
 Item.getBaseWeapon = function () {
-	return new Weapon(null, Weapon.Types.CONTACT, 30, 100, null, 'slash');
+	return new Weapon(null, Weapon.Types.CONTACT, 30, 100, null, 0xFFFFFF);
 };
 
 
@@ -118,6 +118,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 
 	this.attack = function (attackPower) {
 		switch(type) {
+
 			case Weapon.Types.GUN:
 				var world = this.player._world;
         var pos = this.player.state.pos;
@@ -160,22 +161,23 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 	        })
 	        .start();
 				break;
+
 			case Weapon.Types.CONTACT:
 				var slash = Physics.body('contact-weapon', {
 			    x: this.player.state.pos.x + this.player.orientation * 33,
 			    y: this.player.state.pos.y,
-			    image: extra + (this.player.orientation > 0 ? '.png' : '_l.png'),
 			    power: power,
 			    stun: stun,
-			    player: this.player
+			    player: this.player,
+			    tint: extra
 				});
-				slash.view.alpha = 0.9;
 				var world = this.player._world;
 				world.add(slash);
 				setTimeout(function () {
 					world.emit('removeBody', slash);
 				}, 20);
 				break;
+
 			case Weapon.Types.DROP:
 				this.player._world.add(Physics.body('drop-weapon', {
 					x: this.player.state.pos.x + this.player.orientation * 55,
@@ -187,6 +189,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 					stun: stun
 				}));
 				break;
+
 			case Weapon.Types.THROW:
 			  var world = this.player._world;
         var pos = this.player.state.pos;
@@ -212,6 +215,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
         world.add(throwingWeapon);
         scratch.done();
 			break;
+			
 		}
 
 		// consume ammo
@@ -222,6 +226,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 		// check if still have ammo
 		if (this.ammo == 0) {
 			this.unequip();
+      Item.getBaseWeapon().equip(this.player);
 		} else if (this.ammo > 0) {
 			this.player._world.emit('updateGUI', {
 				type: 'item_update',

@@ -65,6 +65,7 @@ function initWorld (world, game, mapType) {
 		spritesToLoad.push('images/' + character + '.png');
 		spritesToLoad.push('images/' + character + '_2.png');
 	}
+	spritesToLoad.push('images/slash.png');
 	renderer.loadSpriteSheets(spritesToLoad, game.onLoaded);
 
 	// subscribe to ticker to advance the simulation

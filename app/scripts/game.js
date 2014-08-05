@@ -32,7 +32,9 @@ function Game (world) {
 
     commandsReceived: function (commands) {
     	var player = players[commands.pId];
-    	if (player) player.commands = commands;
+    	if (player) {
+				player.commands = commands;
+			}
     }
 	});
 
@@ -50,7 +52,11 @@ function Game (world) {
 	};
 
 	var removePlayer = function (playerId) {
-		world.emit('removeBody', players[playerId]);
+		var player = players[playerId];
+		if (player.buff) {
+			player.buff.destroy();
+		}
+		world.emit('removeBody', player);
 		gui.removePlayer(playerId);
 		delete players[playerId];
 		var n = 0;

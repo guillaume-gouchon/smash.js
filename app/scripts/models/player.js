@@ -8,6 +8,8 @@ Physics.body('player', 'rectangle', function (parent) {
   var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
+  var TEAM_COLORS = ['#ED1818', '#3680CF', '#48CF36', '#CFCC36'];
+  var TINT_COLORS = [0xED1818, 0x3680CF, 0x48CF36, 0xCFCC36];
 
   function getRandomName() {
     return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
@@ -61,6 +63,7 @@ Physics.body('player', 'rectangle', function (parent) {
       this.view.play();
 
       this.view.scale.x = -1;
+      // this.view.tint = TINT_COLORS[options.team];
 
       this.movingLeft = false;
       this.movingRight = false;
@@ -68,12 +71,10 @@ Physics.body('player', 'rectangle', function (parent) {
 
     resetCaracteristics: function () {
       this.currentJump = 0;
-      this.currentBomb = 0;
       this.orientation = 1;
       this.speed = 0.2;
       this.nbJumps = 2;
       this.jumpSkill = 0.25;
-      this.nbBombs = 1;
       this.chargeAttack = -1;
       this.chargeJump = -1;
       if (this.buff) {
@@ -111,21 +112,22 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     attack: function () {
-      if (this.weapon == null) {
+      if (!this.weapon) {
         Item.getBaseWeapon().equip(this);
       }
-      if (this.enabled && this.chargeAttack == -1 && this.currentBomb < this.nbBombs) {
+      if (this.enabled && this.chargeAttack == -1) {
         this.chargeAttack = new Date().getTime();
       }
     },
 
     releaseAttack: function () {
-      if (this.chargeAttack > 0 && this.currentBomb < this.nbBombs) {
+      if (this.chargeAttack > 0) {
         var power = 0.2 + (new Date().getTime() - this.chargeAttack) / 1000;
         this.chargeAttack = -1;
 
         if (this.weapon) {
           this.weapon.attack(power);
+          this.animateUseWeapon();
         }
       }
     },
@@ -200,6 +202,7 @@ Physics.body('player', 'rectangle', function (parent) {
       this.state.angular.pos = 0;
       this.state.angular.vel = 0;
       this.state.angular.acc = 0;
+      this.animateDisabled(false);
     },
 
     animateRepop: function () {
@@ -225,6 +228,32 @@ Physics.body('player', 'rectangle', function (parent) {
           world.emit('removeBody', anim);
         })
         .start();
+
+        var animName = new PIXI.Text(this.name, {
+          font: 'bold 16px Arial',
+          fill: TEAM_COLORS[this.team],
+          stroke: '#fff',
+          strokeThickness: 5
+        });
+        animName.anchor = {
+          x: 0.5,
+          y: 0.5
+        };
+        animName.x = this.state.pos.x;
+        var world = this._world;
+        world._renderer.stage.addChild(animName);
+        
+        var tween = new TWEEN.Tween( { y: this.state.pos.y - 30, alpha: 0.8 } )
+          .to( { y: this.state.pos.y - 60, alpha: 0 }, 1200)
+          .easing(TWEEN.Easing.Bounce.In)
+          .onUpdate(function () {
+              animName.y = this.y;
+              animName.alpha = this.alpha;
+          })
+          .onComplete(function () {
+            world.emit('removeBody', animName);
+          })
+          .start();
     },
 
     receiveItem: function () {
@@ -242,13 +271,76 @@ Physics.body('player', 'rectangle', function (parent) {
 
     takeDamage: function (norm, power, stun) {
       var _this = this;
-      setTimeout(function () {
-        _this.setEnabled(true);
-      }, stun);
+      if (this.enabled) {
+        setTimeout(function () {
+          _this.setEnabled(true);
+          _this.animateDisabled(false);
+        }, stun);
+      }
       this.updateDamage(this.damage + power);
       var vector = new Physics.vector(norm.x * power * 0.0004 * (1 + this.damage / 100), (norm.y == 0 ? -0.4 : norm.y) * power * 0.0004 * (1 + this.damage / 100));
       this.accelerate(vector);
       this.setEnabled(false);
+      this.animateDisabled(true);
+      this.animateTakeDamage();
+    },
+
+    animateTakeDamage: function () {
+      var anim = new PIXI.Text(this.damage + '%', {
+        font: 'bold 18px Arial',
+        fill: '#f33',
+        stroke: '#fff',
+        strokeThickness: 5
+      });
+      anim.anchor = {
+        x: 0.5,
+        y: 0.5
+      };
+      anim.x = this.state.pos.x;
+      var world = this._world;
+      world._renderer.stage.addChild(anim);
+      
+      var tween = new TWEEN.Tween( { y: this.state.pos.y - 30, alpha: 0.8 } )
+        .to( { y: this.state.pos.y - 60, alpha: 0 }, 1000)
+        .easing(TWEEN.Easing.Bounce.In)
+        .onUpdate(function () {
+            anim.y = this.y;
+            anim.alpha = this.alpha;
+        })
+        .onComplete(function () {
+          world.emit('removeBody', anim);
+        })
+        .start();
+    },
+
+    animateUseWeapon: function () {
+      if (this.weapon.ammo) {
+        var anim = new PIXI.Text(this.weapon.ammo, {
+          font: 'bold 15px Arial',
+          fill: '#33a',
+          stroke: '#fff',
+          strokeThickness: 5
+        });
+        anim.anchor = {
+          x: 0.5,
+          y: 0.5
+        };
+        anim.x = this.state.pos.x;
+        var world = this._world;
+        world._renderer.stage.addChild(anim);
+        
+        var tween = new TWEEN.Tween( { y: this.state.pos.y - 30, alpha: 0.8 } )
+          .to( { y: this.state.pos.y - 60, alpha: 0 }, 1000)
+          .easing(TWEEN.Easing.Bounce.In)
+          .onUpdate(function () {
+              anim.y = this.y;
+              anim.alpha = this.alpha;
+          })
+          .onComplete(function () {
+            world.emit('removeBody', anim);
+          })
+          .start();
+      }
     },
 
     animateReceivedItem: function (item) {
@@ -283,9 +375,9 @@ Physics.body('player', 'rectangle', function (parent) {
         if (this.life > 0) {
           var _this = this;
           setTimeout(function () {
+            _this.setEnabled(true);
             _this.reset(false);
             _this.animateRepop();
-            _this.setEnabled(true);
             _this.hidden = false;  
           }, 1000);
         }
@@ -295,7 +387,10 @@ Physics.body('player', 'rectangle', function (parent) {
 
     setEnabled: function(enabled) {
       this.enabled = enabled;
-      if (!enabled) {
+    },
+
+    animateDisabled: function (start) {
+      if (start) {
         if (this.injured == null) {
           var _this = this;
           this.injured = new TWEEN.Tween( { x: 0.5 }, 150)
@@ -307,6 +402,7 @@ Physics.body('player', 'rectangle', function (parent) {
               _this.view.scale.x = this.x;
               _this.view.scale.y = this.x;
           });
+          this.view.tint = 0xcccccc;
           this.injured.start();
         }
       } else {
@@ -316,8 +412,9 @@ Physics.body('player', 'rectangle', function (parent) {
         }
         this.view.scale.x = -this.orientation;
         this.view.scale.y = 1;
+        this.view.tint = 0xffffff;
       }
-    },
+    }
   };
 
 });
