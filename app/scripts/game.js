@@ -173,6 +173,6 @@ function Game (world) {
 
 }
 
-Game.TEAM_COLORS = ['#ED1818', '#CFCC36', '#48CF36', '#3680CF'];
-Game.TINT_COLORS = [0xED1818, 0xCFCC36, 0x48CF36,  0x3680CF];
-Game.CHARACTERS = ['tomato', 'lemon', 'tomato', 'lemon'];
+Game.TEAM_COLORS = ['#ee3224', '#e5e758', '#60b038', '#0994ff'];
+Game.TINT_COLORS = [0xee3224, 0xe5e758, 0x60b038,  0x0994ff];
+Game.CHARACTERS = ['tomato', 'lemon', 'green_tomato', 'blue_lemon'];

@@ -145,11 +145,11 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     updateTeam: function (team) {
-      this.team = team;
-      this._world.emit('updateGUI', {
-        type: 'team',
-        target: this
-      });
+      // this.team = team;
+      // this._world.emit('updateGUI', {
+      //   type: 'team',
+      //   target: this
+      // });
     },
 
     updateDamage: function (damage) {
