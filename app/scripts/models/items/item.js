@@ -29,7 +29,7 @@ Item.pickRandomItem = function () {
 		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 40),
 	];
 	return items[parseInt(items.length * Math.random())];
-	return items[6];
+	// return items[6];
 };
 
 Item.getBaseWeapon = function () {

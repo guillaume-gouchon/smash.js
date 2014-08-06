@@ -45,10 +45,10 @@ function Game (world) {
 	});
 
   var getPlayerName = function () {
-  	var names = DEFAULT_NAMES;
+  	var names = DEFAULT_NAMES.slice();
   	var index;
   	for (var i in players) {
-  		index = names.indexOf(players[i]);
+  		index = names.indexOf(players[i].name);
   		if (index >= 0) {
   			names.splice(index, 1);
   		}
@@ -96,12 +96,6 @@ function Game (world) {
 		world.emit('removeBody', player);
 		gui.removePlayer(playerId);
 		delete players[playerId];
-		var n = 0;
-		for (var i in players) {
-			var player = players[i];
-			player.updateTeam(n % 4);
-			n++;
-		}
 	};
 
 	var popBox = function () {
