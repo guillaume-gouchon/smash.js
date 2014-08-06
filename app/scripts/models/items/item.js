@@ -28,7 +28,7 @@ Item.pickRandomItem = function () {
 		new Weapon('bolter-gun.png', Weapon.Types.GUN, 15, 100, 10, 'bolter'),
 		new Weapon('minigun.png', Weapon.Types.GUN, 25, 80, 40),
 	];
-	return items[parseInt((items.length - 1) * Math.random())];
+	return items[parseInt(items.length * Math.random())];
 	return items[6];
 };
 
@@ -74,7 +74,7 @@ function Buff (id, image) {
 				break;
 			case 3:
 				// boost
-				player.jumpSkill *= 1.2;
+				player.jumpSkill *= 1.1;
 				player.speed *= 1.5;
 				break;
 		}

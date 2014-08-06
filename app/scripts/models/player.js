@@ -129,6 +129,31 @@ Physics.body('player', 'rectangle', function (parent) {
 
     openBox: function (box) {
       if (box.isTrap) {
+        var anim = new PIXI.Text('It\'s a TRAP !', {
+          font: 'bold 18px Arial',
+          fill: '#f33',
+          stroke: '#fff',
+          strokeThickness: 5
+        });
+        anim.anchor = {
+          x: 0.5,
+          y: 0.5
+        };
+        anim.x = this.state.pos.x;
+        var world = this._world;
+        world._renderer.stage.addChild(anim);
+        
+        var tween = new TWEEN.Tween( { y: box.state.pos.y - 30, alpha: 0.8 } )
+          .to( { y: box.state.pos.y - 60, alpha: 0 }, 1000)
+          .easing(TWEEN.Easing.Bounce.In)
+          .onUpdate(function () {
+              anim.y = this.y;
+              anim.alpha = this.alpha;
+          })
+          .onComplete(function () {
+            world.emit('removeBody', anim);
+          })
+          .start();
         box.explode();
       } else {
         box.open();

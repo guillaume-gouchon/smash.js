@@ -86,11 +86,6 @@ function GUI () {
 	this.updateLife = function (player, isReset) {
 		var playerElement = getPlayerElement(player.id);
 
-		if (player.initialLife != $('img', playerElement).length) {
-			playerElement.remove();
-			createPlayerElement(player);
-		}
-
 		// animate UI
 		if (!isReset) {
 			playerElement.addClass('loseLife');
