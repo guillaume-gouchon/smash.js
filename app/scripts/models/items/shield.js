@@ -8,11 +8,6 @@ Physics.body('shield', 'convex-polygon', function (parent) {
         treatment: 'kinematic',
         restitution: 1.0,
         cof: 1.0,
-        styles: {
-          lineWidth: 2,
-          fillStyle: 0x35ccbb,
-          strokeStyle: 0x3680DF
-        },
         vertices: [
           {x: 0, y: 0},
           {x: 4, y: 6},
@@ -30,6 +25,7 @@ Physics.body('shield', 'convex-polygon', function (parent) {
           y: 0.5
         }
       });
+      this.view.alpha = 0.9;
     },
 
     takeDamage: function (damage) {

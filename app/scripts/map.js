@@ -82,7 +82,7 @@ Map.MAP_TYPES = {
 	},
 	flag: {
 		id: 1,
-		width: 800,
+		width: 980,
 		life: 1,
 		teams: 2
 	}

@@ -2,12 +2,16 @@ function Game (world) {
 	
 	var world = world;
  	var players = {};
-	var teams = [0, 0, 0, 0];
+	var teamScores = null;
 	var gui = new GUI();
 
 	var started = false;
 
 	var _this = this;
+
+	var DEFAULT_NAMES = ['Colonel Heinz', 'Lord Bobby', 'Lemon Alisa',
+            'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho',
+            'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime', 'Juicy Luke'];
 	
 	var input = new Input(this, {
     padNotSupported: function (padType) {
@@ -40,11 +44,41 @@ function Game (world) {
     }
 	});
 
+  var getPlayerName = function () {
+  	var names = DEFAULT_NAMES;
+  	var index;
+  	for (var i in players) {
+  		index = names.indexOf(players[i]);
+  		if (index >= 0) {
+  			names.splice(index, 1);
+  		}
+  	}
+  	if (names.length > 0) {
+    	return names[parseInt(Math.random() * names.length)];
+  	} else {
+  		return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)] + ' IV';
+  	}
+  };
+
+  var getPlayerTeam = function () {
+  	var teams = [];
+  	for (var i = 0 ; i < world.map.teams; i++) {
+  		teams[i] = 0;
+  	}
+  	for (var i in players) {
+  		if (players[i].team < teams.length) { // used when switching between game modes
+  			teams[players[i].team]++;
+  		}
+  	}
+  	return teams.indexOf(Math.min.apply(Math, teams));
+  };
+
 	var addPlayer = function (playerId) {
 		var player = Physics.body('player', {
 	    id: playerId,
-	    team: Object.keys(players).length % world.map.teams,
-	    life: world.map.life
+	    name: getPlayerName(),
+	    team: getPlayerTeam(),
+	    life: world.map.life,
 	  });
 	  _this.repopPlayer(player);
 		players[player.id] = player;
@@ -84,7 +118,14 @@ function Game (world) {
 
 	this.repopPlayer = function (player) {
 		var viewport = world._renderer.renderer;
-		player.state.pos.set((viewport.width + world.map.width * (2 * Math.random() - 1)) / 2, Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105);
+		var randomZone = world.map.width;
+		var extra = 0;
+		if (world.map.id == Map.MAP_TYPES.flag.id) {
+			// restrict to a particular randomZone depending on the team
+			randomZone /= 2;
+			extra = (2 * player.team - 1) * world.map.width / 4;
+		}
+		player.state.pos.set((viewport.width + randomZone * (2 * Math.random() - 1)) / 2 + extra, Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105);
 	};
 
 	this.onLoaded = function () {
@@ -98,41 +139,54 @@ function Game (world) {
 	};
 
 	this.checkVictory = function () {
-		if (started && world.map.id != 1) {
-			// check if game over
-			var playersAlive = [];
-			for (var i in players) {
-				var player = players[i];
-				if (player.life > 0) {
-					if (playersAlive.length > 0) return;
+		if (started) {
+			if (world.map.id == Map.MAP_TYPES.standard.id) {
+				// check if game over
+				var playersAlive = [];
+				for (var i in players) {
+					var player = players[i];
+					if (player.life > 0) {
+						if (playersAlive.length > 0) return;
 
-					playersAlive.push(player);
+						playersAlive.push(player);
+					}
 				}
+				gui.showVictory(playersAlive[0].name, playersAlive[0].team);
+				started = false;
 			}
-			gui.showVictory(playersAlive[0]);
 		} else {
 			for (var i in players) {
 				var player = players[i];
-				player.life = 3;
+				player.life = world.map.life;
 			}
 		}
 	};
 
 	this.start = function () {
 		started = true;
+		gui.init(world.map);
+		teamScores = [];
+		for (var i = 0; i < world.map.teams; i++) {
+			teamScores[i] = 0;
+		}
 		for (var i in players) {
 			var player = players[i];
-			player.setEnabled(false);
 			player.reset(true);
+			player.setActive(false);
+		}
+		for (var i in world._bodies) {
+			if (world._bodies[i].gameType === 'flag') {
+				world._bodies[i].reset();
+			}
 		}
 		$('#gameIdInGame').removeClass('hide');
 		$('#victory').addClass('hide');
 		$('#instructions').addClass('hide');
 		gui.showRoundStart(function () {
 			for (var i in players) {
-			var player = players[i];
-			player.setEnabled(true);
-		}
+				var player = players[i];
+				player.setActive(true);
+			}
 		});
 	};
 
@@ -163,16 +217,38 @@ function Game (world) {
 
 	this.winPoints = function (team) {
 		if (started) {
-			// update gui
-			// add animation
-			if (++teams[team] == 3) {
-				gui.showVictory('Team ' + (team + 1));
+			teamScores[team]++;
+
+			gui.updateTeamScore(team, teamScores[team]);
+
+			if (teamScores[team] == 3) {
+				gui.showVictory('Team ' + (team + 1), team);
+				started = false;
 			}
+		}
+	};
+
+	this.reset = function () {
+		teamScores = null;
+		var player;
+		for (var i in players) {
+			player = players[i];
+			if (player.team >= world.map.teams) {
+				player.team = getPlayerTeam();
+				gui.updateTeam(player);
+			}
+			
+			world.add(player);
+			renderer.stage.addChild(player.view);
+			player.initialLife = world.map.life;
+			gui.updateInitialLife(player);
+			player.reset(true);
+			player.animateRepop();
 		}
 	};
 
 }
 
-Game.TEAM_COLORS = ['#ee3224', '#e5e758', '#60b038', '#0994ff'];
-Game.TINT_COLORS = [0xee3224, 0xe5e758, 0x60b038,  0x0994ff];
+Game.TEAM_COLORS = ['#ee3224', '#fcff00', '#60b038', '#0994ff'];
+Game.TINT_COLORS = [0xee3224, 0xfcff00, 0x60b038,  0x0994ff];
 Game.CHARACTERS = ['tomato', 'lemon', 'green_tomato', 'blue_lemon'];

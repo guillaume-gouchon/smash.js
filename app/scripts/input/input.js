@@ -258,5 +258,5 @@ function Input(game, callbacks) {
 			}
 		}
 	};
-
+	
 }

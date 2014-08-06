@@ -19,6 +19,7 @@
   <!-- build:css(.tmp) styles/game.css -->
   <link rel="stylesheet" href="styles/font-awesome.min.css">
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/instructions.css">
   <link rel="stylesheet" href="styles/background.css">
   <link rel="stylesheet" href="styles/gui.css">
   <!-- endbuild -->
@@ -47,13 +48,15 @@
     <div class="cloud x5"></div>
   </div>
 
+  <div id="teamScores"></div>
+
   <div id="gui">
     <div id="players"></div>
     
     <div id="message" class="hide"></div>
 
     <div id="victory" class="hide">
-      <div><span>fsdfd</span> rocks !</div>
+      <div><span></span> rocks !</div>
       <button id="replay">Replay ?</button>
     </div>
 
@@ -64,6 +67,8 @@
 
 
   <div id="instructions">
+
+    <button id="switchMode">Switch to Capture the Flag mode</button>
 
     <div id="controls">
       <div id="gamepads" class="tile">

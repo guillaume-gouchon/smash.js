@@ -4,14 +4,6 @@
 */
 Physics.body('player', 'rectangle', function (parent) {
 
-  var DEFAULT_NAMES = ['Colonel Heinz', 'Juice Master', 'Lord Bobby', 'Lemon Alisa',
-            'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho', 
-            'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime'];
-
-  function getRandomName() {
-    return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)];
-  }
-
   return {
 
     init: function (options) {
@@ -26,7 +18,6 @@ Physics.body('player', 'rectangle', function (parent) {
 
       parent.init.call(this, $.extend({}, defaults, options));
 
-      this.name = getRandomName();
       this.character = Game.CHARACTERS[this.team];
       this.commands = new Controller(this.id).toJSON();
       this.enabled = true;
@@ -44,6 +35,7 @@ Physics.body('player', 'rectangle', function (parent) {
       });
       this.view.animationSpeed = 0.1;
       this.view.play();
+      this.isActive = true;
 
       this.view.scale.x = -1;
 
@@ -144,14 +136,6 @@ Physics.body('player', 'rectangle', function (parent) {
       }
     },
 
-    updateTeam: function (team) {
-      // this.team = team;
-      // this._world.emit('updateGUI', {
-      //   type: 'team',
-      //   target: this
-      // });
-    },
-
     updateDamage: function (damage) {
       this.damage = damage;
       this._world.emit('updateGUI', {
@@ -172,7 +156,7 @@ Physics.body('player', 'rectangle', function (parent) {
       if (isNewGame) {
         this.updateLife(this.initialLife);
         this.hidden = false;
-      } else {
+      } else if (this._world.map.id != Map.MAP_TYPES.flag.id) {
         this.updateLife(this.life - 1);
       }
       this.updateDamage(0);
@@ -372,6 +356,11 @@ Physics.body('player', 'rectangle', function (parent) {
       this.enabled = enabled;
     },
 
+    setActive: function (isActive) {
+      this.enabled = isActive;
+      this.isActive = isActive;
+    },
+
     animateDisabled: function (start) {
       if (start) {
         if (this.injured == null) {
@@ -432,6 +421,8 @@ Physics.behavior('player-behavior', function (parent) {
       ,player = this.player
       ,element
       ;
+
+      if (!player.isActive) return;
 
       for (var i = 0, l = collisions.length; i < l; ++i) {
         col = collisions[i];

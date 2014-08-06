@@ -8,6 +8,7 @@ function initWorld (world, game, map) {
     width: window.innerWidth,
     height: window.innerHeight
 	};
+	world.viewport = viewport;
 
 	// setup renderer
 	renderer = Physics.renderer('pixi', viewport);

@@ -82,15 +82,15 @@
 			margin-right: 3px;
 
 			&.lowest {
-				color: black;
+				color: #000;
 			}
 
 			&.low {
-				color: red;
+				color: $red;
 			}
 
 			&.medium {
-				color: orange;
+				color: $yellow;
 			}
 
 			&.high {
@@ -183,12 +183,56 @@
 	color: $yellow!important;
 }
 
+#teamScores {
+
+	div {
+		display: inline-block;
+		width: 50%;
+		opacity: 0.25;
+		font-size: 15em;
+		user-select: none;
+		font-family: 'myFont';
+
+		&:nth-child(1) {
+			color: $red;
+		}
+
+		&:nth-child(2) {
+			color: $yellow;
+		}
+
+		&:nth-child(3) {
+			color: $green;
+		}
+
+		&:nth-child(4) {
+			color: $blue;
+		}
+
+		&.bounce {
+			animation: bigBounce 600ms alternate 1;
+		}
+	}
+}
+
 @keyframes bounce {
   0% {
       transform: scale(1.0);
   }
   100% {
       transform: scale(0.9);
+  }
+}
+
+@keyframes bigBounce {
+  0% {
+      transform: scale(1.0);
+  }
+  50% {
+      transform: scale(1.4);
+  }
+  100% {
+  	transform: scale(1.0);
   }
 }
 

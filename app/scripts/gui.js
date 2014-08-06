@@ -16,7 +16,7 @@ function GUI () {
 
 	var createPlayerElement = function (player) {
 		var s = '<div class="player ' + DEFAULT_TEAM_COLORS[player.team] + ' grow" data-id="' + player.id + '">';
-		for (var i = 0; i < player.life; i++) {
+		for (var i = 0; i < player.initialLife; i++) {
 			s += '<img src="images/' + player.character + '.png"/>';
 		}
 	  s += '<strong class="name">' + player.name + '</strong>'
@@ -51,6 +51,17 @@ function GUI () {
 		}, delay);
 	};
 
+	this.init = function (map) {
+		var teamScores = $('#teamScores');
+		teamScores.addClass('hide').html('');
+		if (map.id == Map.MAP_TYPES.flag.id) {
+			for (var i = 0 ; i < map.teams; i++) {
+				teamScores.append('<div>0</div>');
+			}
+			teamScores.removeClass('hide');
+		}
+	};
+
 	this.addPlayer = function (player) {
 		$('#players').append(createPlayerElement(player));
 		setTimeout(function () {
@@ -65,8 +76,20 @@ function GUI () {
 		}, 300);
 	};
 
+	this.updateInitialLife = function (player) {
+		var playerElement = getPlayerElement(player.id);
+		playerElement.remove();
+		$('#players').append(createPlayerElement(player));
+		getPlayerElement(player.id).removeClass('grow');
+	};
+
 	this.updateLife = function (player, isReset) {
 		var playerElement = getPlayerElement(player.id);
+
+		if (player.initialLife != $('img', playerElement).length) {
+			playerElement.remove();
+			createPlayerElement(player);
+		}
 
 		// animate UI
 		if (!isReset) {
@@ -106,9 +129,9 @@ function GUI () {
 		roundStartAnimation(['Round starts in', '3', '2', '1', 'GO !'], 700, 200, callback);
 	};
 
-	this.showVictory = function (player) {
+	this.showVictory = function (text, team) {
 		var victory = $('#victory');
-		$('#victory span').html(player.name).removeClass('blue red green yellow').addClass(DEFAULT_TEAM_COLORS[player.team]);
+		$('#victory span').html(text).removeClass('blue red green yellow').addClass(DEFAULT_TEAM_COLORS[team]);
 		victory.removeClass('hide');
 	};
 
@@ -134,6 +157,14 @@ function GUI () {
 
 	this.removeItem = function (player) {
 		$('.items', getPlayerElement(player.id)).html('');//.attr('data-content', '');
+	};
+
+	this.updateTeamScore = function (team, score) {
+		var el = $('#teamScores div:nth-child(' + (team + 1) + ')');
+		el.html(score).addClass('bounce');
+		setTimeout(function () {
+			el.removeClass('bounce');
+		}, 1000);
 	};
 
 }
