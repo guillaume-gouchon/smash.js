@@ -105,7 +105,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
         var pos = this.player.state.pos;
         var scratch = Physics.scratchpad();
         var rnd = scratch.vector();
-        rnd.set(this.player.orientation * 35, -0.7 * 35);        
+        rnd.set(this.player.orientation * 40, -0.7 * 40);        
 
         var throwingWeapon = Physics.body('throw-weapon', {
           x: pos.get(0),
@@ -116,7 +116,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 					gameType: extra
         });
         throwingWeapon.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
-        throwingWeapon.state.vel.set(this.player.orientation * attackPower * 1.5, - 0.2 * attackPower);
+        throwingWeapon.state.vel.set(this.player.orientation * attackPower * 1.2, - 0.16 * attackPower);
         throwingWeapon.state.angular.vel = (Math.random() - 0.5) * 0.06;
 
         setTimeout(function () {

@@ -461,6 +461,10 @@ Physics.behavior('player-behavior', function (parent) {
               player.state.angular.acc = 0;
               player.state.angular.vel = 0;
               player.state.angular.pos = 0;
+              if (element.gameType == 'player' && col.norm.y < -0.3 && Math.abs(col.norm.x) < 0.3) {
+                player.jump();
+                element.takeDamage({ x: 0, y: -1 }, 10, 100);
+              }
             }
           } else if (element.gameType == 'damage') {
             if (element.player != player) { // avoid contact weapon to damage their bearer

@@ -37,7 +37,7 @@ Item.explode = function (body, nbFragments, fragmentRadius, fragmentMass, fragme
   if (!world) {
     return;
   }
-console.log(body.power, body.stun)
+
   var pos = body.state.pos
   ,n = nbFragments
   ,r = fragmentRadius

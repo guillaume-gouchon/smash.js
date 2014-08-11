@@ -24,7 +24,7 @@ Physics.body('drop-weapon', 'rectangle', function (parent) {
     },
 
     explode: function () {
-      Item.explode(this, 15, 2, 0.05, 1, 500);
+      Item.explode(this, 10, 2, 0.05, 0.5, 500);
     }
   };
   
