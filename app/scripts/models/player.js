@@ -1,7 +1,3 @@
-
-/**
-* BODY
-*/
 Physics.body('player', 'rectangle', function (parent) {
 
   return {
@@ -27,7 +23,7 @@ Physics.body('player', 'rectangle', function (parent) {
       this.resetCaracteristics();
       
       this.view = renderer.createDisplay('movieclip', {
-        frames: ['images/' + this.character + '.png', 'images/' + this.character + '_2.png'],
+        frames: [Game.IMAGES_PATH + this.character + '.png', Game.IMAGES_PATH + this.character + '_2.png'],
         anchor: {
           x: 0.5,
           y: 0.5
@@ -57,7 +53,7 @@ Physics.body('player', 'rectangle', function (parent) {
       }
       if (this.weapon) {
         this.weapon.unequip();
-        Item.getBaseWeapon().equip(this);
+        Item.buildBaseWeapon().equip(this);
       }
 
       this.items = [];
@@ -89,7 +85,7 @@ Physics.body('player', 'rectangle', function (parent) {
 
     attack: function () {
       if (!this.weapon) {
-        Item.getBaseWeapon().equip(this);
+        Item.buildBaseWeapon().equip(this);
       }
       if (this.enabled && this.chargeAttack == -1) {
         this.chargeAttack = new Date().getTime();
@@ -181,7 +177,7 @@ Physics.body('player', 'rectangle', function (parent) {
       if (isNewGame) {
         this.updateLife(this.initialLife);
         this.hidden = false;
-      } else if (this._world.map.id != Map.MAP_TYPES.flag.id) {
+      } else if (this._world.map.id != Map.MAP_TYPES.FLAG.id) {
         this.updateLife(this.life - 1);
       }
       this.updateDamage(0);
@@ -198,7 +194,7 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     animateRepop: function () {
-      var anim = PIXI.Sprite.fromImage("images/" + this.character + ".png");
+      var anim = PIXI.Sprite.fromImage(Game.IMAGES_PATH + this.character + '.png');
       anim.alpha = 0.4;
       anim.anchor = {
         x: 0.5,
@@ -336,7 +332,7 @@ Physics.body('player', 'rectangle', function (parent) {
     },
 
     animateReceivedItem: function (item) {
-      var anim = PIXI.Sprite.fromImage("images/items/" + item.image);
+      var anim = PIXI.Sprite.fromImage(Game.IMAGES_PATH + 'items/' + item.image);
       anim.alpha = 0.8;
       anim.anchor = {
         x: 0.5,
@@ -416,10 +412,6 @@ Physics.body('player', 'rectangle', function (parent) {
 
 });
 
-
-/**
-* BEHAVIOUR
-*/
 Physics.behavior('player-behavior', function (parent) {
 
   return {

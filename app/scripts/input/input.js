@@ -27,12 +27,12 @@ function Input(game, callbacks) {
 		}
 	};
 	
+	var AXIS_THRESHOLD = 0.3;
+
 	var KEYBOARD_PLAYER_1_ID = 'keyboard1';
 	var KEYBOARD_PLAYER_2_ID = 'keyboard2';
 	var KEYBOARD_PLAYER_3_ID = 'keyboard3';
-
-	var AXIS_THRESHOLD = 0.3;
-
+	
 	var keyboardControllers = [new Controller(KEYBOARD_PLAYER_1_ID), new Controller(KEYBOARD_PLAYER_2_ID), new Controller(KEYBOARD_PLAYER_3_ID)];
 	var keyboardPlayers = [];
 

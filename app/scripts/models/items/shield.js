@@ -19,7 +19,7 @@ Physics.body('shield', 'convex-polygon', function (parent) {
       parent.init.call(this, $.extend({}, defaults, options));
 
       this.view = renderer.createDisplay('sprite', {
-        texture: 'images/shield.png',
+        texture: Game.IMAGES_PATH + 'shield.png',
         anchor: {
           x: 0.5,
           y: 0.5

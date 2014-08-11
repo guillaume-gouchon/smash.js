@@ -1,6 +1,6 @@
 var renderer;
 
-function initWorld (world, game, map) {
+function configureWorld (world, game, map) {
 
 	// setup viewport
 	var viewport = {
@@ -24,10 +24,9 @@ function initWorld (world, game, map) {
   window.addEventListener('resize', function () {
       renderer.el.width = window.innerWidth;
       renderer.el.height = window.innerHeight;
-      viewportBounds = Physics.aabb(0, -100, window.innerWidth, window.innerHeight + 200);
+      viewportBounds = Physics.aabb(-100, -100, viewport.width + 200, viewport.height + 200);
   }, true);
 
-	
   // create map
   var mapElements = new Map(map.id, viewport);
   world.add(mapElements);
@@ -63,10 +62,10 @@ function initWorld (world, game, map) {
 	var spritesToLoad = []
 	for (var i in Game.CHARACTERS) {
 		var character = Game.CHARACTERS[i];
-		spritesToLoad.push('images/' + character + '.png');
-		spritesToLoad.push('images/' + character + '_2.png');
+		spritesToLoad.push(Game.IMAGES_PATH + character + '.png');
+		spritesToLoad.push(Game.IMAGES_PATH + character + '_2.png');
 	}
-	spritesToLoad.push('images/slash.png');
+	spritesToLoad.push(Game.IMAGES_PATH + 'slash.png');
 	renderer.loadSpriteSheets(spritesToLoad, game.onLoaded);
 
 	// subscribe to ticker to advance the simulation

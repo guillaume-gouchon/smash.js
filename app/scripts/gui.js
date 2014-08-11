@@ -17,7 +17,7 @@ function GUI () {
 	var createPlayerElement = function (player) {
 		var s = '<div class="player ' + DEFAULT_TEAM_COLORS[player.team] + ' grow" data-id="' + player.id + '">';
 		for (var i = 0; i < player.initialLife; i++) {
-			s += '<img src="images/' + player.character + '.png"/>';
+			s += '<img src="' + Game.IMAGES_PATH + player.character + '.png"/>';
 		}
 	  s += '<strong class="name">' + player.name + '</strong>'
       + '<strong class="damage ' + getDamageColor(player.damage) + '">' + player.damage + '%</strong>'
@@ -51,10 +51,17 @@ function GUI () {
 		}, delay);
 	};
 
+
+	/**
+	*
+	*		PUBLIC METHODS
+	*
+	*/
+
 	this.init = function (map) {
 		var teamScores = $('#teamScores');
 		teamScores.addClass('hide').html('');
-		if (map.id == Map.MAP_TYPES.flag.id) {
+		if (map.id == Map.MAP_TYPES.FLAG.id) {
 			for (var i = 0 ; i < map.teams; i++) {
 				teamScores.append('<div>0</div>');
 			}
@@ -139,7 +146,7 @@ function GUI () {
 
 	this.addItem = function (player) {
 		var weapon = player.weapon;
-		$('.items', getPlayerElement(player.id)).addClass('invisible').html('<img src="images/items/' + weapon.image + '"/>');//.attr('data-content', weapon.ammo);
+		$('.items', getPlayerElement(player.id)).addClass('invisible').html('<img src="' + Game.IMAGES_PATH + 'items/' + weapon.image + '"/>');//.attr('data-content', weapon.ammo);
 		setTimeout(function () {
 			$('.items', getPlayerElement(player.id)).removeClass('invisible');
 		}, 100);

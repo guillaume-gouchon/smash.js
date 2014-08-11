@@ -1,7 +1,7 @@
 function Map (mapId, viewport) {
 
-	var addPlatform = function (x, y, w, h) {
-		elements.push(Physics.body('platform', {
+	var addBasePlatform = function (x, y, w, h) {
+		elements.push(Physics.body('base-platform', {
 	    x: x,
 	    y: y,
 	    width: w,
@@ -19,7 +19,7 @@ function Map (mapId, viewport) {
 	};
 
 	var addMovingBridge = function (x, y, w, h, min, max, orientation, speed) {
-		var element = Physics.body('movingBridge', {
+		var element = Physics.body('moving-bridge', {
 	    x: x,
 	    y: y,
 	    width: w,
@@ -29,7 +29,7 @@ function Map (mapId, viewport) {
 	    orientation: orientation,
 	    speed: speed
 	  });
-		elements.push(Physics.behavior('platform-moving', { platform: element }));
+		elements.push(Physics.behavior('moving-bridge', { bridge: element }));
     elements.push(element);
 	};
 
@@ -46,17 +46,17 @@ function Map (mapId, viewport) {
     elements.push(element);
 	};
 
+	// create map
 	var elements = [];
-
 	switch (mapId) {
-		case Map.MAP_TYPES.standard.id:
-			addPlatform(viewport.width / 2, viewport.height / 2 + 195, 700, 140);
+		case Map.MAP_TYPES.STANDARD.id:
+			addBasePlatform(viewport.width / 2, viewport.height / 2 + 195, 700, 140);
 			addBridge(viewport.width / 2 - 200, viewport.height / 2, 200, 50);
 			addBridge(viewport.width / 2 + 200, viewport.height / 2, 200, 50);
 			addMovingBridge(viewport.width / 2, viewport.height / 2 -125, 200, 50, -100, 100, 0, 0.07);
 			break;
-		case Map.MAP_TYPES.flag.id:
-			addPlatform(viewport.width / 2, viewport.height / 2 + 300, 700, 140);
+		case Map.MAP_TYPES.FLAG.id:
+			addBasePlatform(viewport.width / 2, viewport.height / 2 + 300, 700, 140);
 			addBridge(viewport.width / 2 - 400, viewport.height / 2 + 150, 200, 50);
 			addBridge(viewport.width / 2 + 400, viewport.height / 2 + 150, 200, 50);
 			addBridge(viewport.width / 2 - 400, viewport.height / 2 -100, 200, 50);
@@ -65,8 +65,8 @@ function Map (mapId, viewport) {
 			addBridge(viewport.width / 2 + 200, viewport.height / 2, 200, 50);
 			addMovingBridge(viewport.width / 2, viewport.height / 2 + 120, 200, 50, -100, 100, 0, 0.07);
 			addMovingBridge(viewport.width / 2, viewport.height / 2 -125, 200, 50, -60, 60, 1, 0.05);
-			addFlag(viewport.width / 2 - 400, viewport.height / 2 + 90, Game.TINT_COLORS[0], 0, viewport.width / 2 + 400, viewport.height / 2 + 90);
-			addFlag(viewport.width / 2 + 400, viewport.height / 2 + 90, Game.TINT_COLORS[1], 1, viewport.width / 2 - 400, viewport.height / 2 + 90);
+			addFlag(viewport.width / 2 - 400, viewport.height / 2 + 90, Game.TEAM_COLORS[0], 0, viewport.width / 2 + 400, viewport.height / 2 + 90);
+			addFlag(viewport.width / 2 + 400, viewport.height / 2 + 90, Game.TEAM_COLORS[1], 1, viewport.width / 2 - 400, viewport.height / 2 + 90);
 			break;
 	}
 
@@ -74,13 +74,13 @@ function Map (mapId, viewport) {
 }
 
 Map.MAP_TYPES = {
-	standard: {
+	STANDARD: {
 		id: 0,
 		width: 500,
 		life: 3,
 		teams: 4
 	},
-	flag: {
+	FLAG: {
 		id: 1,
 		width: 980,
 		life: 1,

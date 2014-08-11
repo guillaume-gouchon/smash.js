@@ -1,9 +1,10 @@
 function Game (world) {
 	
 	var world = world;
+	var gui = new GUI();
+
  	var players = {};
 	var teamScores = null;
-	var gui = new GUI();
 
 	var started = false;
 
@@ -13,7 +14,9 @@ function Game (world) {
             'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho',
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime', 'Juicy Luke'];
 	
+	// initialize input
 	var input = new Input(this, {
+
     padNotSupported: function (padType) {
     	if (padType == Phonepad.PAD_TYPES.gamepad) {
     		$('#gamepads').addClass('notCompatible');
@@ -42,6 +45,7 @@ function Game (world) {
 				player.commands = commands;
 			}
     }
+    
 	});
 
   var getPlayerName = function () {
@@ -110,11 +114,17 @@ function Game (world) {
 
 	this.loaded = false;
 
+	/**
+	*
+	*		PUBLIC METHODS
+	*
+	*/
+
 	this.repopPlayer = function (player) {
 		var viewport = world._renderer.renderer;
 		var randomZone = world.map.width;
 		var extra = 0;
-		if (world.map.id == Map.MAP_TYPES.flag.id) {
+		if (world.map.id == Map.MAP_TYPES.FLAG.id) {
 			// restrict to a particular randomZone depending on the team
 			randomZone /= 2;
 			extra = (2 * player.team - 1) * world.map.width / 4;
@@ -127,14 +137,9 @@ function Game (world) {
 		gui.hideLoading();
 	};
 
-	this.update = function () {
-		popBox();
-		input.update(players);
-	};
-
 	this.checkVictory = function () {
 		if (started) {
-			if (world.map.id == Map.MAP_TYPES.standard.id) {
+			if (world.map.id == Map.MAP_TYPES.STANDARD.id) {
 				// check if game over
 				var playersAlive = [];
 				for (var i in players) {
@@ -160,15 +165,15 @@ function Game (world) {
 		started = true;
 		gui.init(world.map);
 		teamScores = [];
-		for (var i = 0; i < world.map.teams; i++) {
+		for (var i = 0; i < world.map.teams; i++) {// reset scores
 			teamScores[i] = 0;
 		}
-		for (var i in players) {
+		for (var i in players) {// reset players
 			var player = players[i];
 			player.reset(true);
 			player.setActive(false);
 		}
-		for (var i in world._bodies) {
+		for (var i in world._bodies) {// reset flags positions
 			if (world._bodies[i].gameType === 'flag') {
 				world._bodies[i].reset();
 			}
@@ -182,6 +187,11 @@ function Game (world) {
 				player.setActive(true);
 			}
 		});
+	};
+
+	this.update = function () {
+		popBox();
+		input.update(players);
 	};
 
 	this.updateGUI = function (data) {
@@ -241,8 +251,31 @@ function Game (world) {
 		}
 	};
 
+	this.changeMap = function () {
+		// get new map
+		var map = world.map.id == Map.MAP_TYPES.FLAG.id ? Map.MAP_TYPES.STANDARD : Map.MAP_TYPES.FLAG;
+		$('#switchMode').html(map.id == Map.MAP_TYPES.FLAG.id ? 'Switch to Battle mode' : 'Switch to Capture the Flag mode');
+		
+		world.pause();
+
+		// reset world
+		world.remove(world.getBodies());
+    while (renderer.stage.children.length > 0) {
+    	renderer.stage.removeChild(renderer.stage.children[0]);
+    }
+
+    // create new map
+	  var mapElements = new Map(map.id, world.viewport);
+	  world.add(mapElements);
+	  world.map = map;
+
+    _this.reset();
+
+		world.unpause();
+	};
+
 }
 
+Game.IMAGES_PATH = 'images/game/';
 Game.TEAM_COLORS = ['#ee3224', '#fcff00', '#60b038', '#0994ff'];
-Game.TINT_COLORS = [0xee3224, 0xfcff00, 0x60b038,  0x0994ff];
 Game.CHARACTERS = ['tomato', 'lemon', 'green_tomato', 'blue_lemon'];

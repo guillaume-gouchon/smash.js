@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="styles/instructions.css">
   <link rel="stylesheet" href="styles/background.css">
   <link rel="stylesheet" href="styles/gui.css">
+  <link rel="stylesheet" href="styles/loading.css">
   <!-- endbuild -->
 
 </head>
@@ -32,7 +33,7 @@
   <![endif]-->
 
   <div id="background">
-    <img class="mountains" src="images/mountains.png"/>
+    <img class="mountains" src="images/bg/mountains.png"/>
 
     <div class="bouncing">
       <div class="cloud staticCloud s1"></div>
@@ -77,7 +78,7 @@
         </div>
         <div id="commands">
           <div>
-            <img src="images/axes.png"/>
+            <img src="images/pad.png"/>
             <p>Move</p>
           </div>
           <div>
@@ -132,7 +133,6 @@
       Credits
     </div>
 
-
   </div>
 
   <!-- build:js scripts/vendor.js -->
@@ -148,16 +148,21 @@
   <!-- endbuild -->
 
   <!-- build:js({app,.tmp}) scripts/game.js -->
-  <script src="scripts/models/border.js"></script>
-  <script src="scripts/models/box.js"></script>
-  <script src="scripts/models/decor.js"></script>
+  <script src="scripts/models/decor/decor.js"></script>
+  <script src="scripts/models/decor/base-platform.js"></script>
+  <script src="scripts/models/decor/bridge.js"></script>
+  <script src="scripts/models/decor/moving-bridge.js"></script>
+  <script src="scripts/models/decor/border.js"></script>
+  <script src="scripts/models/decor/box.js"></script>
+  <script src="scripts/models/decor/flag.js"></script>
   <script src="scripts/models/items/item.js"></script>
+  <script src="scripts/models/items/weapon.js"></script>
+  <script src="scripts/models/items/buff.js"></script>
   <script src="scripts/models/items/shield.js"></script>
   <script src="scripts/models/items/throw_weapon.js"></script>
   <script src="scripts/models/items/contact_weapon.js"></script>
   <script src="scripts/models/items/drop_weapon.js"></script>
   <script src="scripts/models/items/bullet.js"></script>
-  <script src="scripts/models/items/flag.js"></script>
   <script src="scripts/models/player.js"></script>
   <script src="scripts/input/controller.js"></script>
   <script src="scripts/input/input.js"></script>

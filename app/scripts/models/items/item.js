@@ -1,7 +1,3 @@
-
-/**
-*	Item class
-*/
 function Item (type, image) {
 	this.type = type;
 	this.image = image;	
@@ -32,215 +28,62 @@ Item.pickRandomItem = function () {
 	// return items[6];
 };
 
-Item.getBaseWeapon = function () {
+Item.buildBaseWeapon = function () {
 	return new Weapon(null, Weapon.Types.CONTACT, 30, 100, null, 0xFFFFFF);
 };
 
+Item.explode = function (body, nbFragments, fragmentRadius, fragmentMass, fragmentSpeed, duration) {
+	var world = body._world;
+  if (!world) {
+    return;
+  }
 
-/**
-* Buff class
-*/
-function Buff (id, image) {
-	Item.call(this, Item.Types.BUFF, image);
+  var pos = body.state.pos
+  ,n = nbFragments
+  ,r = fragmentRadius
+  ,mass = fragmentMass
+  ,d
+  ,width
+  ,height
+  ,debris = [];
 
-	this.applyBuff = function (player) {
-		switch (id) {
-			case 0:
-				// shield
-				if (player.buff != null) {
-					player.buff.destroy();
-				}
-				var shield = Physics.body('shield', {
-			    x: player.state.pos.x + player.orientation * 20,
-			    y: player.state.pos.y,
-			    power: 150
-				});
-	      player._world.add([
-	      	shield, 
-	      	Physics.behavior('shield-behavior', {
-		      	player: player,
-		      	shield: shield
-		      })
-	      ]);
-	      player.buff = shield;
-				break;
-			case 1:
-				// third jump
-				player.nbJumps = 3;
-				break;
-			case 2:
-				// health
-				player.updateDamage(0);
-				break;
-			case 3:
-				// boost
-				player.jumpSkill *= 1.1;
-				player.speed *= 1.5;
-				break;
-		}
-	};
+  // create debris
+  while (n--) {
+    width = r * Math.random();
+    height = r * Math.random();
+    d = Physics.body('convex-polygon', {
+        x: pos.get(0),
+        y: pos.get(1),
+        vx: fragmentSpeed * (Math.random() - 0.5),
+        vy: fragmentSpeed * (Math.random() - 0.5),
+        vertices: [
+          {x: 0, y: 0},
+          {x: width, y: 0},
+          {x: width, y: height},
+          {x: 0, y: height}
+        ],
+        mass: mass,
+        restitution: 0.9,
+        styles: {
+          lineWidth: 3,
+          strokeStyle: 0xFF8E0D,
+          fillStyle: 0xff0000
+        },
+        power: body.power,
+        stun: body.stun
+    });
+    debris.push(d);
+  }
 
-}
-Buff.prototype = Object.create(Item.prototype);
-Buff.prototype.constructor = Buff;
+  setTimeout(function() {
+    if (world && debris) {
+      for (var i = 0, l = debris.length; i < l; ++i) {
+        world.emit('removeBody', debris[i]);
+      }
+      debris = undefined;
+    }
+  }, duration);
 
-
-/**
-* Weapon class
-*/
-function Weapon (image, type, power, stun, ammo, extra, extra2) {
-	Item.call(this, Item.Types.WEAPON, image);
-
-	this.player = null;
-	this.ammo = ammo;
-
-	this.equip = function (player) {
-		this.player = player;
-		if (this.player.weapon) {
-			this.player.weapon.unequip(this.player);
-		}
-		this.player.weapon = this;
-		if (this.image) {
-			this.player._world.emit('updateGUI', {
-				type: 'item_add',
-				target: this.player
-			});
-		}
-	};
-
-	this.unequip = function () {
-		this.player._world.emit('updateGUI', {
-			type: 'item_remove',
-			target: this.player
-		});
-		this.player.weapon = Item.baseWeapon;
-	};
-
-	this.attack = function (attackPower) {
-		switch(type) {
-
-			case Weapon.Types.GUN:
-				var world = this.player._world;
-        var pos = this.player.state.pos;
-        var bullet = Physics.body('bullet', {
-          x: pos.get(0),
-          y: pos.get(1),
-          image: 'bullet.png',
-          power: power,
-          stun: stun,
-					gameType: extra
-        });
-        bullet.state.pos.set(pos.get(0) + this.player.orientation * 40, pos.get(1) - 6);
-        bullet.state.vel.set(this.player.orientation * 3, 0);
-
-        setTimeout(function () {
-          bullet.explode();
-        }, 500);
-        world.add(bullet);
-
-        // animate fire
-        var anim = PIXI.Sprite.fromImage("images/muzzle.png");
-	      anim.alpha = 0.8;
-	      anim.anchor = {
-	        x: 0.5,
-	        y: 0.5
-	      };
-	      anim.x = this.player.state.pos.x + this.player.orientation * 35;
-	      anim.y = this.player.state.pos.y - 6;
-	      anim.rotation = this.player.orientation > 0 ? Math.PI : 0;
-	      world._renderer.stage.addChild(anim);
-	      
-	      var tween = new TWEEN.Tween( { x: 0, y: 0 } )
-	        .to( { x: 1, y: 1 }, 100)
-	        .onUpdate(function () {
-	            anim.scale.x = this.x;
-	            anim.scale.y = this.y;
-	        })
-	        .onComplete(function () {
-	          world.emit('removeBody', anim);
-	        })
-	        .start();
-				break;
-
-			case Weapon.Types.CONTACT:
-				var slash = Physics.body('contact-weapon', {
-			    x: this.player.state.pos.x + this.player.orientation * 33,
-			    y: this.player.state.pos.y,
-			    power: power,
-			    stun: stun,
-			    player: this.player,
-			    tint: extra
-				});
-				var world = this.player._world;
-				world.add(slash);
-				setTimeout(function () {
-					world.emit('removeBody', slash);
-				}, 20);
-				break;
-
-			case Weapon.Types.DROP:
-				this.player._world.add(Physics.body('drop-weapon', {
-					x: this.player.state.pos.x + this.player.orientation * 55,
-					y: this.player.state.pos.y,
-					vx: this.player.orientation * attackPower * 0.1,
-					vy: - 0.1 * attackPower,
-					image: image,
-					power: power,
-					stun: stun
-				}));
-				break;
-
-			case Weapon.Types.THROW:
-			  var world = this.player._world;
-        var pos = this.player.state.pos;
-        var scratch = Physics.scratchpad();
-        var rnd = scratch.vector();
-        rnd.set(this.player.orientation * 40, -0.7 * 40);        
-
-        var throwingWeapon = Physics.body('throw-weapon', {
-          x: pos.get(0),
-          y: pos.get(1),
-          image: image,
-          power: power,
-          stun: stun,
-					gameType: extra
-        });
-        throwingWeapon.state.pos.set(pos.get(0) + rnd.get(0), pos.get(1) + rnd.get(1));
-        throwingWeapon.state.vel.set(this.player.orientation * attackPower * 1.5, - 0.2 * attackPower);
-        throwingWeapon.state.angular.vel = (Math.random() - 0.5) * 0.06;
-
-        setTimeout(function () {
-          throwingWeapon.explode();
-        }, extra2);
-        world.add(throwingWeapon);
-        scratch.done();
-			break;
-			
-		}
-
-		// consume ammo
-		if (this.ammo) {
-			this.ammo--;
-		}
-
-		// check if still have ammo
-		if (this.ammo == 0) {
-			this.unequip();
-      Item.getBaseWeapon().equip(this.player);
-		} else if (this.ammo > 0) {
-			this.player._world.emit('updateGUI', {
-				type: 'item_update',
-				target: this.player
-			});
-		}
-	};
-}
-Weapon.prototype = Object.create(Item.prototype);
-Weapon.prototype.constructor = Weapon;
-
-Weapon.Types = {
-	GUN: 0,
-	CONTACT: 1,
-	DROP: 2,
-	THROW: 3
+  world.add(debris);
+  world.emit('removeBody', body);
 };

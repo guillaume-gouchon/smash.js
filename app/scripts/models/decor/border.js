@@ -1,6 +1,3 @@
-/**
-* BEHAVIOUR
-*/
 Physics.behavior('border-behaviour', 'edge-collision-detection', function (parent) {
 
   return {

@@ -1,7 +1,3 @@
-
-/**
-*  FLAG BODY
-*/
 Physics.body('flag', 'rectangle', function (parent) {
 
   return {
@@ -23,13 +19,13 @@ Physics.body('flag', 'rectangle', function (parent) {
       this.goalY = options.goalY;
 
       this.view = renderer.createDisplay('sprite', {
-        texture: 'images/flag.png',
+        texture: Game.IMAGES_PATH + 'flag.png',
         anchor: {
           x: 0.5,
           y: 0.5
         }
       });
-      this.view.tint = options.color;
+      this.view.tint = parseInt(options.color.replace('#', '0x'));
       this.view.alpha = 0.9;
     },
 
@@ -85,10 +81,6 @@ Physics.body('flag', 'rectangle', function (parent) {
   
 });
 
-
-/**
-* BEHAVIOUR
-*/
 Physics.behavior('flag-behavior', function (parent) {
 
   return {
