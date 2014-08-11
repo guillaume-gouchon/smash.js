@@ -37,7 +37,7 @@ Item.explode = function (body, nbFragments, fragmentRadius, fragmentMass, fragme
   if (!world) {
     return;
   }
-
+console.log(body.power, body.stun)
   var pos = body.state.pos
   ,n = nbFragments
   ,r = fragmentRadius
@@ -52,6 +52,7 @@ Item.explode = function (body, nbFragments, fragmentRadius, fragmentMass, fragme
     width = r * Math.random();
     height = r * Math.random();
     d = Physics.body('convex-polygon', {
+        gameType: 'damage',
         x: pos.get(0),
         y: pos.get(1),
         vx: fragmentSpeed * (Math.random() - 0.5),
