@@ -16,15 +16,17 @@ function configureWorld (world, game, map) {
 
 	// add borders
 	var viewportBounds = Physics.aabb(-100, -100, viewport.width + 200, viewport.height + 200);
-  world.add(Physics.behavior('border-behaviour', {
+	var borderBehaviour = Physics.behavior('border-behaviour', {
       aabb: viewportBounds
-  }));
+  });
+  world.add(borderBehaviour);
 
 	// resize window events
   window.addEventListener('resize', function () {
       renderer.el.width = window.innerWidth;
       renderer.el.height = window.innerHeight;
-      viewportBounds = Physics.aabb(-100, -100, viewport.width + 200, viewport.height + 200);
+      viewportBounds = Physics.aabb(-100, -100, window.innerWidth + 200, window.innerHeight + 200);
+      borderBehaviour.setAABB(viewportBounds);
   }, true);
 
   // create map
