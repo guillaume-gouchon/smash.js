@@ -2,7 +2,7 @@
 *		Class which contains all the commands information sent to the game (player id, button states, etc...).
 *		Must be compliant with W3C GamePad API (https://dvcs.w3.org/hg/gamepad/raw-file/default/gamepad.html)
 */
-function Controller(playerId) {
+function Controller( playerId ) {
 
 	this.pId = playerId;
 
@@ -15,63 +15,41 @@ function Controller(playerId) {
 	*		Buttons
 	*/
 	var buttons = [new GamepadButton(), new GamepadButton(), new GamepadButton(), new GamepadButton()];
-
-	this.updateAxisState = function (axis, value) {
-		if (this.axes[axis] == value) {
-			return false;
-		} else {
-			this.axes[axis] = value;
-			return true;
-		}
-	};
-
-	this.updateButtonState = function (button, pressed) {
-		var needsUpdate = buttons[button].updateState(pressed);
-		return needsUpdate;
-	};
-
-	this.releaseAllAxes = function () {
-		var needsUpdate = this.axes[0] != 0.0 || this.axes[1] != 0.0;
-		this.axes = [0.0, 0.0];
-		return needsUpdate;
-	}
-
-	this.releaseAllButtons = function () {
-		for (var i in buttons) {
-			buttons[i].updateState(false);
-		}
-	}
-
-	this.toJSON = function () {
-		return {
-			pId: this.pId,
-			axes: this.axes,
-			buttons: buttons
-		}
-	};
-
 }
 
-
-/**
-*		Represents a Gamepad button
-*/
-function GamepadButton () {
-
-	this.pressed = false;
-	this.value = 0.0;
-
-	this.updateState = function (isPressed) {
-		if (isPressed == this.pressed) { 
-			return false;
-		} else {
-			this.pressed = isPressed;
-			this.value = isPressed ? 1.0 : 0.0;
-			return true;
-		}
+Controller.prototype.updateAxisState = function ( axis, value ) {
+	if ( this.axes[axis] == value ) {
+		return false;
+	} else {
+		this.axes[axis] = value;
+		return true;
 	}
+};
 
+Controller.prototype.updateButtonState = function ( button, pressed ) {
+	var needsUpdate = buttons[button].updateState(pressed);
+	return needsUpdate;
+};
+
+Controller.prototype.releaseAllAxes = function () {
+	var needsUpdate = this.axes[0] != 0.0 || this.axes[1] != 0.0;
+	this.axes = [0.0, 0.0];
+	return needsUpdate;
 }
+
+Controller.prototype.releaseAllButtons = function () {
+	for ( var i in buttons ) {
+		buttons[i].updateState(false);
+	}
+}
+
+Controller.prototype.toJSON = function () {
+	return {
+		pId: this.pId,
+		axes: this.axes,
+		buttons: buttons
+	}
+};
 
 
 /**
@@ -85,3 +63,24 @@ Controller.BUTTONS_MAP = {
 	X: 2,
 	Y: 3
 };
+
+
+/**
+*		Represents a Gamepad button
+*/
+function GamepadButton () {
+	this.pressed = false;
+	this.value = 0.0;
+}
+
+GamepadButton.prototype.updateState = function ( isPressed ) {
+	if ( isPressed == this.pressed ) { 
+		return false;
+	} else {
+		this.pressed = isPressed;
+		this.value = isPressed ? 1.0 : 0.0;
+		return true;
+	}
+};
+
+

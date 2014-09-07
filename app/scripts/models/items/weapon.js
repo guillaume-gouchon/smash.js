@@ -2,6 +2,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 	Item.call(this, Item.Types.WEAPON, image);
 
 	this.player = null;
+	this.weaponType = type;
 	this.ammo = ammo;
 
 	this.equip = function (player) {
@@ -23,7 +24,7 @@ function Weapon (image, type, power, stun, ammo, extra, extra2) {
 			type: 'item_remove',
 			target: this.player
 		});
-		this.player.weapon = Item.baseWeapon;
+		this.player.weapon = Item.buildBaseWeapon();
 	};
 
 	this.attack = function (attackPower) {

@@ -2,8 +2,11 @@ function Game (world) {
 	
 	var world = world;
 	var gui = new GUI();
+	var AI = new AI(world);
 
  	var players = {};
+ 	var aiPlayers = [];
+
 	var teamScores = null;
 
 	var started = false;
@@ -77,12 +80,13 @@ function Game (world) {
   	return teams.indexOf(Math.min.apply(Math, teams));
   };
 
-	var addPlayer = function (playerId) {
+	var addPlayer = function (playerId, AILevel) {
 		var player = Physics.body('player', {
 	    id: playerId,
 	    name: getPlayerName(),
 	    team: getPlayerTeam(),
 	    life: world.map.life,
+	    AI: AILevel
 	  });
 	  _this.repopPlayer(player);
 		players[player.id] = player;
@@ -90,16 +94,22 @@ function Game (world) {
 		world.add([player, playerBehavior]);
 		player.animateRepop();
 		gui.addPlayer(player);
+		if ( AILevel ) {
+			aiPlayers.push( player );
+		}
 	};
 
 	var removePlayer = function (playerId) {
 		var player = players[playerId];
-		if (player.buff) {
+		if ( player.buff ) {
 			player.buff.destroy();
 		}
-		world.emit('removeBody', player);
-		gui.removePlayer(playerId);
+		world.emit( 'removeBody', player );
+		gui.removePlayer( playerId );
 		delete players[playerId];
+		if ( player.AI ) {
+			aiPlayers.splice( aiPlayers.indexOf( player ), 1 );
+		}
 	};
 
 	var popBox = function () {
@@ -192,6 +202,7 @@ function Game (world) {
 	this.update = function () {
 		popBox();
 		input.update(players);
+		AI.update(players);
 	};
 
 	this.updateGUI = function (data) {
