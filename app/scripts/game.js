@@ -14,8 +14,8 @@ function Game( world ) {
 	var _this = this;
 
 	var DEFAULT_NAMES = ['Colonel Heinz', 'Lord Bobby', 'Lemon Alisa',
-            'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho',
-            'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime', 'Juicy Luke'];
+	  'The Red Baron', 'Tom Boy', 'Tommy Toe', 'Lee Mon', 'Sigmund Fruit', 'Al Pacho',
+	  'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime', 'Juicy Luke'];
 	
 	// initialize input
 	var input = new Input( this, {
@@ -149,6 +149,9 @@ function Game( world ) {
 	this.onLoaded = function() {
 		_this.loaded = true;
 		gui.hideLoading();
+
+	  // init AI
+	  ai.init();
 	};
 
 	this.checkVictory = function() {
@@ -179,6 +182,7 @@ function Game( world ) {
 	};
 
 	this.start = function() {
+
 		started = true;
 		gui.init( world.map );
 		teamScores = [];
@@ -217,7 +221,7 @@ function Game( world ) {
 	this.update = function() {
 		popBox();
 		input.update( players );
-		ai.update( players );
+		ai.update( aiPlayers );
 	};
 
 	this.updateGUI = function( data ) {

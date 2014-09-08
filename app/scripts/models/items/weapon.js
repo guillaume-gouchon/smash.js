@@ -96,10 +96,10 @@ Weapon.prototype.attack = function( attackPower ) {
       rnd.set( this.player.orientation * 40, -0.7 * 40 );        
 
       var throwingWeapon = Physics.body( 'throw-weapon', {
-        image: image,
-        power: power,
-        stun: stun,
-				gameType: extra
+        image: this.image,
+        power: this.power,
+        stun: this.stun,
+				gameType: this.extra
       });
       throwingWeapon.state.pos.set( pos.get( 0 ) + rnd.get( 0 ), pos.get( 1 ) + rnd.get( 1 ) );
       throwingWeapon.state.vel.set( this.player.orientation * attackPower * 1.2, - 0.16 * attackPower );
@@ -107,7 +107,7 @@ Weapon.prototype.attack = function( attackPower ) {
 
       setTimeout(function () {
         throwingWeapon.explode();
-      }, extra2);
+      }, this.extra2);
       world.add( throwingWeapon );
       scratch.done();
 		break;
