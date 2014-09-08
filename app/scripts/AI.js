@@ -1,5 +1,7 @@
 function AI( world ) {
 
+	var UPDATE_FREQUENCY = 30;
+
 	var step = 0;
 
 	// game interesting info
@@ -7,7 +9,7 @@ function AI( world ) {
 	var players = [];
 	var boxes = [];
 
-	var updateCommands = function ( player ) {
+	var updateCommands = function( player ) {
 		var commands = new Controller( player.id ).toJSON();
 		
 		var nearestEnemy = getNearestEnemy( player );
@@ -16,7 +18,7 @@ function AI( world ) {
 		if ( !isPlatformUnder ) {
 			// target nearest reachable platform
 		} else if ( !player.weapon || player.weapon.image == Item.buildBaseWeapon().image ) {
-			if ( nearestBox.obj && (!nearestEnemy.obj || nearestBox.distance < nearestEnemy.distance)) {
+			if ( nearestBox.obj && ( !nearestEnemy.obj || nearestBox.distance < nearestEnemy.distance ) ) {
 				// target nearest box
 			} else if ( nearestEnemy.obj ) {
 				// target nearest enemy
@@ -51,7 +53,7 @@ function AI( world ) {
 		player.commands = commands;
 	};
 
-	var updateInfo = function () {
+	var updateInfo = function() {
 		// update players (when adding new players retro-actively)
 		players = [];// TODO
 
@@ -64,7 +66,7 @@ function AI( world ) {
 		}
 	};
 
-	var isPlatformUnder = function ( player ) {
+	var isPlatformUnder = function( player ) {
 		var platform;
 		for ( var i in platforms ) {
 			platform = platforms[i];
@@ -78,11 +80,11 @@ function AI( world ) {
 		return false;
 	};
 
-	var getNearestEnemy = function ( player ) {
+	var getNearestEnemy = function( player ) {
 		var nearest = null,
-		smallestDistance = -1,
-		distance,
-		otherPlayer;
+			smallestDistance = -1,
+			distance,
+			otherPlayer;
 
 		for ( var i in players ) {
 			otherPlayer = players[i];
@@ -101,11 +103,11 @@ function AI( world ) {
 		};
 	};
 
-	var getNearestBox = function ( player ) {
+	var getNearestBox = function( player ) {
 		var nearest = null,
-		smallestDistance = -1,
-		distance,
-		box;
+			smallestDistance = -1,
+			distance,
+			box;
 		
 		for ( var i in boxes ) {
 			box = boxes[i];
@@ -122,7 +124,7 @@ function AI( world ) {
 		};
 	};
 
-	var getDistance = function ( object1, object2 ) {
+	var getDistance = function( object1, object2 ) {
 		return Math.sqrt( Math.pow( object1.state.pos.x - object2.state.pos.x, 2 ) + Math.pow( object1.state.pos.y - object2.state.pos.y, 2 ) );
 	};
 
@@ -131,8 +133,8 @@ function AI( world ) {
 	*	PUBLIC METHODS
 	*/
 
-	this.update = function ( players ) {
-		step = step > 100 ? 0 : step++;
+	this.update = function( players ) {
+		step = step > 1000 ? 0 : step + 1;
 
 		// update info used by AI engine
 		if ( step % UPDATE_FREQUENCY == 0 ) {
@@ -150,19 +152,17 @@ function AI( world ) {
 	};
 }
 
-AI.UPDATE_FREQUENCY = 10;
-
 AI.Levels = {
 	EASY: {
 		id: 0,
-		frequency: 20
+		frequency: 30
 	},
 	MEDIUM: {
 		id: 1,
-		frequency: 10
+		frequency: 20
 	},
 	HARD: {
 		id: 2,
-		frequency: 5
+		frequency: 10
 	}
 };

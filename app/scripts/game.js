@@ -1,16 +1,16 @@
-function Game (world) {
+function Game( world ) {
 	
-	var world = world;
-	var gui = new GUI();
-	var AI = new AI(world);
+	var PROBABILITY_BOX_POP = 0.006;
 
- 	var players = {};
- 	var aiPlayers = [];
+	var world = world,
+		gui = new GUI(),
+		ai = new AI( world );
+
+ 	var players = {},
+ 		aiPlayers = [];
 
 	var teamScores = null;
-
 	var started = false;
-
 	var _this = this;
 
 	var DEFAULT_NAMES = ['Colonel Heinz', 'Lord Bobby', 'Lemon Alisa',
@@ -18,88 +18,90 @@ function Game (world) {
             'Mister Bean', 'Ban Anna', 'General Grape', 'Smoothie', 'Optimus Lime', 'Juicy Luke'];
 	
 	// initialize input
-	var input = new Input(this, {
-
-    padNotSupported: function (padType) {
-    	if (padType == Phonepad.PAD_TYPES.gamepad) {
-    		$('#gamepads').addClass('notCompatible');
-    	} else if (padType == Phonepad.PAD_TYPES.phonepad) {
-    		$('#phonepads').addClass('notCompatible');
+	var input = new Input( this, {
+    padNotSupported: function( padType ) {
+    	if ( padType == Phonepad.PAD_TYPES.gamepad ) {
+    		$( '#gamepads' ).addClass( 'notCompatible' );
+    	} else if ( padType == Phonepad.PAD_TYPES.phonepad ) {
+    		$( '#phonepads' ).addClass( 'notCompatible' );
     	}
     },
 
-    connected: function (gameId) {
-    	$('.gameId').html(gameId);
+    connected: function( gameId ) {
+    	$( '.gameId' ).html( gameId );
     },
 
-    playerConnected: function (playerId, padType) {
-    	if (_this.loaded && players[playerId] == null) {
-    		addPlayer(playerId);
+    playerConnected: function( playerId, padType ) {
+    	if ( _this.loaded && players[playerId] == null ) {
+    		addPlayer( playerId, padType == 10 );
     	}
     },
 
-    playerDisconnected: function (playerId) {
-    	removePlayer(playerId);
+    playerDisconnected: function( playerId ) {
+    	removePlayer( playerId );
     },
 
-    commandsReceived: function (commands) {
+    commandsReceived: function( commands ) {
     	var player = players[commands.pId];
-    	if (player) {
+    	if ( player ) {
 				player.commands = commands;
 			}
     }
-    
 	});
 
-  var getPlayerName = function () {
-  	var names = DEFAULT_NAMES.slice();
-  	var index;
-  	for (var i in players) {
-  		index = names.indexOf(players[i].name);
-  		if (index >= 0) {
-  			names.splice(index, 1);
+  var getPlayerName = function() {
+  	var names = DEFAULT_NAMES.slice(),
+  		index;
+
+  	// remove names which have been already taken
+  	for ( var i in players ) {
+  		index = names.indexOf( players[i].name );
+  		if ( index >= 0 ) {
+  			names.splice( index, 1 );
   		}
   	}
-  	if (names.length > 0) {
-    	return names[parseInt(Math.random() * names.length)];
+
+  	if ( names.length > 0 ) {
+    	return names[parseInt( Math.random() * names.length )];
   	} else {
-  		return DEFAULT_NAMES[parseInt(Math.random() * DEFAULT_NAMES.length)] + ' IV';
+  		return DEFAULT_NAMES[parseInt( Math.random() * DEFAULT_NAMES.length )] + ' IV';
   	}
   };
 
-  var getPlayerTeam = function () {
+  var getPlayerTeam = function() {
+  	// count number of players per team
   	var teams = [];
-  	for (var i = 0 ; i < world.map.teams; i++) {
+  	for ( var i = 0 ; i < world.map.teams; i++ ) {
   		teams[i] = 0;
   	}
-  	for (var i in players) {
-  		if (players[i].team < teams.length) { // used when switching between game modes
+  	for ( var i in players ) {
+  		if ( players[i].team < teams.length ) { // used when switching between game modes
   			teams[players[i].team]++;
   		}
   	}
-  	return teams.indexOf(Math.min.apply(Math, teams));
+  	return teams.indexOf( Math.min.apply( Math, teams ) );
   };
 
-	var addPlayer = function (playerId, AILevel) {
-		var player = Physics.body('player', {
+	var addPlayer = function( playerId, AILevel ) {
+		var player = Physics.body( 'player', {
 	    id: playerId,
 	    name: getPlayerName(),
 	    team: getPlayerTeam(),
 	    life: world.map.life,
 	    AI: AILevel
 	  });
-	  _this.repopPlayer(player);
+	  _this.repopPlayer( player );
 		players[player.id] = player;
-	  var playerBehavior = Physics.behavior('player-behavior', { player: player });
-		world.add([player, playerBehavior]);
+	  var playerBehavior = Physics.behavior( 'player-behavior', { player: player } );
+		world.add( [player, playerBehavior] );
 		player.animateRepop();
-		gui.addPlayer(player);
+		gui.addPlayer( player );
 		if ( AILevel ) {
 			aiPlayers.push( player );
 		}
 	};
 
-	var removePlayer = function (playerId) {
+	var removePlayer = function( playerId ) {
 		var player = players[playerId];
 		if ( player.buff ) {
 			player.buff.destroy();
@@ -112,13 +114,13 @@ function Game (world) {
 		}
 	};
 
-	var popBox = function () {
-		if (Math.random() < 0.006) {
-			var element = Physics.body('box', {
-		    x: (world._renderer.renderer.width + world.map.width * (2 * Math.random() - 1)) / 2,
+	var popBox = function() {
+		if ( Math.random() < PROBABILITY_BOX_POP ) {
+			var element = Physics.body( 'box', {
+		    x: ( world._renderer.renderer.width + world.map.width * ( 2 * Math.random() - 1 ) ) / 2,
 		    y: 0
 		  });
-			world.add(element);
+			world.add( element );
 		}
 	};
 
@@ -130,108 +132,121 @@ function Game (world) {
 	*
 	*/
 
-	this.repopPlayer = function (player) {
-		var viewport = world._renderer.renderer;
-		var randomZone = world.map.width;
-		var extra = 0;
-		if (world.map.id == Map.MAP_TYPES.FLAG.id) {
+	this.repopPlayer = function( player ) {
+		var viewport = world._renderer.renderer,
+			randomZone = world.map.width,
+			extra = 0;
+
+		if ( world.map.id == Map.Types.FLAG.id ) {
 			// restrict to a particular randomZone depending on the team
 			randomZone /= 2;
-			extra = (2 * player.team - 1) * world.map.width / 4;
+			extra = ( 2 * player.team - 1 ) * world.map.width / 4;
 		}
-		player.state.pos.set((viewport.width + randomZone * (2 * Math.random() - 1)) / 2 + extra, Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105);
+		player.state.pos.set( ( viewport.width + randomZone * ( 2 * Math.random() - 1 ) ) / 2 + extra,
+			Math.random() < 0.5 ? viewport.height / 2 - 50 : viewport.height / 2 + 105 );
 	};
 
-	this.onLoaded = function () {
+	this.onLoaded = function() {
 		_this.loaded = true;
 		gui.hideLoading();
 	};
 
-	this.checkVictory = function () {
-		if (started) {
-			if (world.map.id == Map.MAP_TYPES.STANDARD.id) {
+	this.checkVictory = function() {
+		if ( started ) {
+			if ( world.map.id == Map.Types.STANDARD.id ) {
 				// check if game over
-				var playersAlive = [];
-				for (var i in players) {
-					var player = players[i];
-					if (player.life > 0) {
-						if (playersAlive.length > 0) return;
+				var playersAlive = [],
+					player;
 
-						playersAlive.push(player);
+				for ( var i in players ) {
+					player = players[i];
+					if ( player.life > 0 ) {
+						if ( playersAlive.length > 0 ) return;
+
+						playersAlive.push( player );
 					}
 				}
-				gui.showVictory(playersAlive[0].name, playersAlive[0].team);
+				gui.showVictory( playersAlive[0].name, playersAlive[0].team );
 				started = false;
 			}
 		} else {
-			for (var i in players) {
-				var player = players[i];
+			var player;
+			for ( var i in players ) {
+				player = players[i];
 				player.life = world.map.life;
 			}
 		}
 	};
 
-	this.start = function () {
+	this.start = function() {
 		started = true;
-		gui.init(world.map);
+		gui.init( world.map );
 		teamScores = [];
-		for (var i = 0; i < world.map.teams; i++) {// reset scores
+
+		// reset scores
+		for ( var i = 0; i < world.map.teams; i++ ) {
 			teamScores[i] = 0;
 		}
-		for (var i in players) {// reset players
+
+		// reset players
+		for ( var i in players ) {
 			var player = players[i];
-			player.reset(true);
-			player.setActive(false);
+			player.reset( true );
+			player.setActive( false );
 		}
-		for (var i in world._bodies) {// reset flags positions
-			if (world._bodies[i].gameType === 'flag') {
+
+		// reset flags positions
+		for ( var i in world._bodies ) {
+			if ( world._bodies[i].gameType === 'flag' ) {
 				world._bodies[i].reset();
 			}
 		}
-		$('#gameIdInGame').removeClass('hide');
-		$('#victory').addClass('hide');
-		$('#instructions').addClass('hide');
+
+		$( '#gameIdInGame' ).removeClass( 'hide' );
+		$( '#victory' ).addClass( 'hide' );
+		$( '#instructions' ).addClass( 'hide' );
 		gui.showRoundStart(function () {
-			for (var i in players) {
-				var player = players[i];
-				player.setActive(true);
+			var player;
+			for ( var i in players ) {
+				player = players[i];
+				player.setActive( true );
 			}
 		});
 	};
 
-	this.update = function () {
+	this.update = function() {
 		popBox();
-		input.update(players);
-		AI.update(players);
+		input.update( players );
+		ai.update( players );
 	};
 
-	this.updateGUI = function (data) {
-		switch(data.type) {
+	this.updateGUI = function( data ) {
+		switch( data.type ) {
 			case 'life':
-				if (started && world.map.id != 1) {
-					gui.updateLife(data.target);
+				if ( started && world.map.id != Map.Types.FLAG.id ) {
+					gui.updateLife( data.target );
 				}
 				break;
 			case 'team':
-				gui.updateTeam(data.target);
+				gui.updateTeam( data.target );
 				break;
 			case 'damage':
-				gui.updateDamage(data.target);
+				gui.updateDamage( data.target );
 				break;
 			case 'item_add':
-				gui.addItem(data.target);
+				gui.addItem( data.target );
 				break;
 			case 'item_remove':
-				gui.removeItem(data.target);
+				gui.removeItem( data.target );
 				break;
 			case 'item_update':
-				gui.updateItem(data.target);
+				gui.updateItem( data.target );
 				break;
 		}
 	};
 
-	this.winPoints = function (team) {
-		if (started) {
+	this.winPoints = function( team ) {
+		if ( started ) {
 			teamScores[team]++;
 
 			gui.updateTeamScore(team, teamScores[team]);
@@ -246,43 +261,54 @@ function Game (world) {
 	this.reset = function () {
 		teamScores = null;
 		var player;
-		for (var i in players) {
+		for ( var i in players ) {
 			player = players[i];
-			if (player.team >= world.map.teams) {
+			if ( player.team >= world.map.teams ) {
 				player.team = getPlayerTeam();
-				gui.updateTeam(player);
+				gui.updateTeam( player );
 			}
 			
-			world.add(player);
-			renderer.stage.addChild(player.view);
+			world.add( player );
+			renderer.stage.addChild( player.view );
 			player.initialLife = world.map.life;
-			gui.updateInitialLife(player);
-			player.reset(true);
+			gui.updateInitialLife( player );
+			player.reset( true );
 			player.animateRepop();
 		}
 	};
 
-	this.changeMap = function () {
+	this.changeMap = function() {
 		// get new map
-		var map = world.map.id == Map.MAP_TYPES.FLAG.id ? Map.MAP_TYPES.STANDARD : Map.MAP_TYPES.FLAG;
-		$('#switchMode').html(map.id == Map.MAP_TYPES.FLAG.id ? 'Switch to Battle mode' : 'Switch to Capture the Flag mode');
+		var map = world.map.id == Map.Types.FLAG.id ? Map.Types.STANDARD : Map.Types.FLAG;
+		$( '#switchMode' ).html( map.id == Map.Types.FLAG.id ? 'Switch to Battle mode' : 'Switch to Capture the Flag mode' );
 		
 		world.pause();
 
 		// reset world
-		world.remove(world.getBodies());
-    while (renderer.stage.children.length > 0) {
-    	renderer.stage.removeChild(renderer.stage.children[0]);
+		world.remove( world.getBodies() );
+    while ( renderer.stage.children.length > 0 ) {
+    	renderer.stage.removeChild( renderer.stage.children[0] );
     }
 
     // create new map
-	  var mapElements = new Map(map.id, world.viewport);
-	  world.add(mapElements);
+	  var mapElements = new Map( map.id, world.viewport );
+	  world.add( mapElements );
 	  world.map = map;
 
     _this.reset();
 
 		world.unpause();
+	};
+
+	this.addAIPlayer = function() {
+		addPlayer( new Date().getTime(), AI.Levels.EASY );
+	};
+
+	this.removeAIPlayer = function() {
+		// remove random AI player
+		if ( aiPlayers.length > 0 ) {
+			removePlayer( aiPlayers[parseInt( Math.random() * aiPlayers.length )].id );
+		}
 	};
 
 }

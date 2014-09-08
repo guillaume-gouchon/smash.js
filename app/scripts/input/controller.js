@@ -14,10 +14,10 @@ function Controller( playerId ) {
 	/**
 	*		Buttons
 	*/
-	var buttons = [new GamepadButton(), new GamepadButton(), new GamepadButton(), new GamepadButton()];
+	this.buttons = [new GamepadButton(), new GamepadButton(), new GamepadButton(), new GamepadButton()];
 }
 
-Controller.prototype.updateAxisState = function ( axis, value ) {
+Controller.prototype.updateAxisState = function( axis, value ) {
 	if ( this.axes[axis] == value ) {
 		return false;
 	} else {
@@ -26,61 +26,40 @@ Controller.prototype.updateAxisState = function ( axis, value ) {
 	}
 };
 
-Controller.prototype.updateButtonState = function ( button, pressed ) {
-	var needsUpdate = buttons[button].updateState(pressed);
+Controller.prototype.updateButtonState = function( button, pressed ) {
+	var needsUpdate = this.buttons[button].updateState( pressed );
 	return needsUpdate;
 };
 
-Controller.prototype.releaseAllAxes = function () {
+Controller.prototype.releaseAllAxes = function() {
 	var needsUpdate = this.axes[0] != 0.0 || this.axes[1] != 0.0;
 	this.axes = [0.0, 0.0];
 	return needsUpdate;
 }
 
-Controller.prototype.releaseAllButtons = function () {
-	for ( var i in buttons ) {
-		buttons[i].updateState(false);
+Controller.prototype.releaseAllButtons = function() {
+	for ( var i in this.buttons ) {
+		this.buttons[i].updateState( false );
 	}
 }
 
-Controller.prototype.toJSON = function () {
+Controller.prototype.toJSON = function() {
 	return {
 		pId: this.pId,
 		axes: this.axes,
-		buttons: buttons
+		buttons: this.buttons
 	}
 };
 
 
 /**
-*		Maps the different inputs to their indexes in the GamePad API object.
+*		Maps the different buttons to their indexes in the GamePad API object.
 */
-Controller.BUTTONS_MAP = {
-	axisHorizontal: 0,
-	axisVertical: 1,
+Controller.Buttons = {
+	AXIS_HORIZONTAL: 0,
+	AXIS_VERTICAL: 1,
 	A: 0,
 	B: 1,
 	X: 2,
 	Y: 3
 };
-
-
-/**
-*		Represents a Gamepad button
-*/
-function GamepadButton () {
-	this.pressed = false;
-	this.value = 0.0;
-}
-
-GamepadButton.prototype.updateState = function ( isPressed ) {
-	if ( isPressed == this.pressed ) { 
-		return false;
-	} else {
-		this.pressed = isPressed;
-		this.value = isPressed ? 1.0 : 0.0;
-		return true;
-	}
-};
-
-

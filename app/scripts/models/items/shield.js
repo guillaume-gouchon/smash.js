@@ -1,8 +1,8 @@
-Physics.body('shield', 'convex-polygon', function (parent) {
+Physics.body( 'shield', 'convex-polygon', function( parent ) {
 
   return {
     
-    init: function (options) {
+    init: function( options ) {
       var defaults = {
         gameType: 'shield',
         treatment: 'kinematic',
@@ -16,9 +16,9 @@ Physics.body('shield', 'convex-polygon', function (parent) {
         ],
       };
 
-      parent.init.call(this, $.extend({}, defaults, options));
+      parent.init.call( this, $.extend( {}, defaults, options ) );
 
-      this.view = renderer.createDisplay('sprite', {
+      this.view = renderer.createDisplay( 'sprite', {
         texture: Game.IMAGES_PATH + 'shield.png',
         anchor: {
           x: 0.5,
@@ -28,40 +28,40 @@ Physics.body('shield', 'convex-polygon', function (parent) {
       this.view.alpha = 0.9;
     },
 
-    takeDamage: function (damage) {
+    takeDamage: function( damage ) {
       this.power -= damage;
-      if (this.power <= 0) {
+      if ( this.power <= 0 ) {
         this.destroy();
       }
     },
 
-    destroy: function () {
-      if (this._world) {
-        this._world.emit('removeBody', this);
+    destroy: function() {
+      if ( this._world ) {
+        this._world.emit( 'removeBody', this );
       }
     }
-  }
+
+  };
   
 });
 
-/**
-* BEHAVIOUR
-*/
-Physics.behavior('shield-behavior', function (parent) {
+Physics.behavior( 'shield-behavior', function( parent ) {
 
   return {
 
-    init: function (options) {
-      parent.init.call(this, options);
+    init: function( options ) {
+      parent.init.call( this, options );
 
       this.player = options.player;
       this.shield = options.shield;
     },
 
-    behave: function (data) {
+    behave: function() {
       this.shield.state.pos.y = this.player.state.pos.y;
       this.shield.state.pos.x =  this.player.state.pos.x + this.player.orientation * 30;
       this.shield.view.scale.x = this.player.orientation == 1 ? 1 : -1;
     }
+
   };
+  
 });

@@ -1,15 +1,16 @@
-Physics.body('decor', 'convex-polygon', function (parent) {
+Physics.body( 'decor', 'convex-polygon', function( parent ) {
 
   return {
     
-    init: function (options) {
+    init: function( options ) {
       var defaults = {
         gameType: 'decor',
         treatment: options.treatment || 'static',
       };
 
-      parent.init.call(this, $.extend({}, defaults, options));
-    },
+      parent.init.call( this, $.extend( {}, defaults, options ) );
+    }
+
   };
   
 });

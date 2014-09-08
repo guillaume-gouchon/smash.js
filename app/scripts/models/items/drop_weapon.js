@@ -1,8 +1,8 @@
-Physics.body('drop-weapon', 'rectangle', function (parent) {
+Physics.body( 'drop-weapon', 'rectangle', function( parent ) {
 
   return {
     
-    init: function (options) {
+    init: function( options ) {
       var defaults = {
         gameType: 'explosive',
         width: 38,
@@ -12,9 +12,9 @@ Physics.body('drop-weapon', 'rectangle', function (parent) {
         cof: 1.0
       };
 
-      parent.init.call(this, $.extend({}, defaults, options));
+      parent.init.call( this, $.extend( {}, defaults, options ) );
 
-      this.view = renderer.createDisplay('sprite', {
+      this.view = renderer.createDisplay( 'sprite', {
         texture: Game.IMAGES_PATH + options.image,
         anchor: {
           x: 0.5,
@@ -23,9 +23,10 @@ Physics.body('drop-weapon', 'rectangle', function (parent) {
       });
     },
 
-    explode: function () {
-      Item.explode(this, 10, 2, 0.05, 0.5, 500);
+    explode: function() {
+      Item.explode( this, 10, 2, 0.05, 0.5, 500 );
     }
+    
   };
   
 });

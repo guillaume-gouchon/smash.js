@@ -1,8 +1,8 @@
-Physics.body('throw-weapon', 'circle', function (parent) {
+Physics.body( 'throw-weapon', 'circle', function( parent ) {
 
   return {
     
-    init: function (options) {
+    init: function( options ) {
       var defaults = {
         gameType: 'explosive',
         radius: 10,
@@ -11,9 +11,9 @@ Physics.body('throw-weapon', 'circle', function (parent) {
         cof: 1.0
       };
 
-      parent.init.call(this, $.extend({}, defaults, options));
+      parent.init.call( this, $.extend( {}, defaults, options ) );
 
-      this.view = renderer.createDisplay('sprite', {
+      this.view = renderer.createDisplay( 'sprite', {
         texture: Game.IMAGES_PATH + options.image,
         anchor: {
           x: 0.5,
@@ -22,17 +22,18 @@ Physics.body('throw-weapon', 'circle', function (parent) {
       });
     },
 
-    explode: function () {
-      if (this.gameType == 'bomb') {
-        Item.explode(this, 25, 6, 0.05, 1.5, 500);
+    explode: function() {
+      if ( this.gameType == 'bomb' ) {
+        Item.explode( this, 25, 6, 0.05, 1.5, 500 );
       } else {
         var world = this._world;
-        if (!world) {
+        if ( !world ) {
           return;
         }
-        world.emit('removeBody', this);
+        world.emit( 'removeBody', this );
       }
     }
+    
   };
   
 });

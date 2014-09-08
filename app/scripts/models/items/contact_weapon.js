@@ -1,8 +1,8 @@
-Physics.body('contact-weapon', 'rectangle', function (parent) {
+Physics.body( 'contact-weapon', 'rectangle', function( parent ) {
 
   return {
     
-    init: function (options) {
+    init: function( options ) {
       var defaults = {
       	treatment: 'kinematic',
         gameType: 'damage',
@@ -13,9 +13,9 @@ Physics.body('contact-weapon', 'rectangle', function (parent) {
         cof: 1.0
       };
 
-      parent.init.call(this, $.extend({}, defaults, options));
+      parent.init.call( this, $.extend( {}, defaults, options ) );
 
-      this.view = renderer.createDisplay('sprite', {
+      this.view = renderer.createDisplay( 'sprite', {
         texture: Game.IMAGES_PATH + 'slash.png',
         anchor: {
           x: 0.5,
@@ -26,5 +26,7 @@ Physics.body('contact-weapon', 'rectangle', function (parent) {
       this.view.tint = options.tint;
       this.view.alpha = 0.9;
     }
-  }
+
+  };
+
 });
