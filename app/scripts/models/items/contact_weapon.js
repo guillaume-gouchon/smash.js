@@ -10,7 +10,8 @@ Physics.body( 'contact-weapon', 'rectangle', function( parent ) {
         height: 30,
         restitution: 1.0,
         mass: 1,
-        cof: 1.0
+        cof: 1.0,
+        friendlyFree: true
       };
 
       parent.init.call( this, $.extend( {}, defaults, options ) );

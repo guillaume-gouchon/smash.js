@@ -313,7 +313,7 @@ function AI( world ) {
 AI.Levels = {
 	EASY: {
 		id: 0,
-		frequency: 25
+		frequency: 20
 	},
 	MEDIUM: {
 		id: 1,

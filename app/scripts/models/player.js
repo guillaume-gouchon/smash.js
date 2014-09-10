@@ -509,7 +509,7 @@ Physics.behavior( 'player-behavior', function( parent ) {
               }
             }
           } else if ( element.gameType == 'damage' ) {
-            if ( element.player != player ) {// avoid contact weapon to damage their bearer
+            if (!element.friendlyFree || element.player != player ) {// avoid contact weapon to damage their bearer
               player.takeDamage( col.norm, element.power, element.stun, element.player );
             }
           } else if ( element.gameType == 'explosive' ) {
