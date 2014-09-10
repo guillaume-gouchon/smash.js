@@ -20,6 +20,7 @@ function GUI() {
 			s += '<img src="' + Game.IMAGES_PATH + player.character + '.png"/>';
 		}
 	  s += '<strong class="name">' + player.name + '</strong>'
+      + '<div class="frags">0 frags</div>'
       + '<strong class="damage ' + getDamageColor( player.damage ) + '">' + player.damage + '%</strong>'
       + '<div class="items invisible"></div>'
     + '</div>';
@@ -117,6 +118,11 @@ function GUI() {
 	this.updateTeam = function( player ) {
 		var playerElement = getPlayerElement( player.id );
 		$( '.name', playerElement ).removeClass( 'blue red green yellow' ).addClass( DEFAULT_TEAM_COLORS[player.team] );
+	};
+
+	this.updateFrags = function( player ) {
+		var playerElement = getPlayerElement( player.id );
+		$( '.frags', playerElement ).html( player.frags + ' frags' );
 	};
 
 	this.showRoundStart = function( callback ) {

@@ -71,7 +71,8 @@ Item.explode = function ( body, nbFragments, fragmentRadius, fragmentMass, fragm
           fillStyle: 0xff0000
         },
         power: body.power,
-        stun: body.stun
+        stun: body.stun,
+        player: body.player
     });
     debris.push( d );
   }

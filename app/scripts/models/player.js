@@ -37,6 +37,8 @@ Physics.body( 'player', 'rectangle', function( parent ) {
 
       this.movingLeft = false;
       this.movingRight = false;
+
+      this.frags = 0;
     },
 
     resetCaracteristics: function() {
@@ -56,6 +58,9 @@ Physics.body( 'player', 'rectangle', function( parent ) {
       }
 
       this.items = [];
+
+      // used for frags count
+      this.lastHit = null;
     },
 
     moveLeft: function() {
@@ -178,6 +183,11 @@ Physics.body( 'player', 'rectangle', function( parent ) {
       if ( isNewGame ) {
         this.updateLife( this.initialLife );
         this.hidden = false;
+        this.frags = 0;
+        this._world.emit( 'updateGUI', {
+          type: 'frags',
+          target: this
+        });
       } else if ( this._world.map.id != Map.Types.FLAG.id ) {
         this.updateLife( this.life - 1 );
       }
@@ -260,7 +270,7 @@ Physics.body( 'player', 'rectangle', function( parent ) {
       this.animateReceivedItem( item );
     },
 
-    takeDamage: function( norm, power, stun ) {
+    takeDamage: function( norm, power, stun, attacker ) {
       var _this = this;
       if ( this.enabled ) {
         setTimeout(function() {
@@ -275,6 +285,10 @@ Physics.body( 'player', 'rectangle', function( parent ) {
       this.setEnabled( false );
       this.animateDisabled( true );
       this.animateTakeDamage();
+
+      if ( attacker ) {
+        this.lastHit = attacker.id;
+      }
     },
 
     animateTakeDamage: function() {
@@ -375,7 +389,7 @@ Physics.body( 'player', 'rectangle', function( parent ) {
             _this.hidden = false;  
           }, 1000);
         }
-        this._world.emit( 'death' );
+        this._world.emit( 'death', this );
       }
     },
 
@@ -491,18 +505,18 @@ Physics.behavior( 'player-behavior', function( parent ) {
               player.state.angular.pos = 0;
               if ( element.gameType == 'player' && col.norm.y < -0.3 && Math.abs( col.norm.x ) < 0.3 ) {
                 player.jump();
-                element.takeDamage( { x: 0, y: -1 }, 10, 100 );
+                element.takeDamage( { x: 0, y: 1 }, 10, 100, player );
               }
             }
           } else if ( element.gameType == 'damage' ) {
-            if ( element.player != player ) { // avoid contact weapon to damage their bearer
-              player.takeDamage( col.norm, element.power, element.stun );
+            if ( element.player != player ) {// avoid contact weapon to damage their bearer
+              player.takeDamage( col.norm, element.power, element.stun, element.player );
             }
           } else if ( element.gameType == 'explosive' ) {
-            player.takeDamage( col.norm, element.power, element.stun );
+            player.takeDamage( col.norm, element.power, element.stun, element.player );
             element.explode();
           } else if ( element.gameType == 'bolter' ) {
-            player.takeDamage( col.norm, element.power, element.stun );
+            player.takeDamage( col.norm, element.power, element.stun, element.player );
             element.explode();
           } else if ( element.gameType == 'flag' ) {
             element.updateBearer( player );

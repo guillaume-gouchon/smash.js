@@ -23,7 +23,8 @@ Weapon.prototype.attack = function( attackPower ) {
 	        image: 'bullet.png',
 	        power: this.power,
 	        stun: this.stun,
-					gameType: this.extra
+					gameType: this.extra,
+					player: this.player
 	      });
 
       bullet.state.pos.set( pos.get( 0 ) + this.player.orientation * 40, pos.get( 1 ) - 6 );
@@ -83,7 +84,8 @@ Weapon.prototype.attack = function( attackPower ) {
 				vy: - 0.1 * attackPower,
 				image: this.image,
 				power: this.power,
-				stun: this.stun
+				stun: this.stun,
+				player: this.player
 			}));
 			break;
 
@@ -99,7 +101,8 @@ Weapon.prototype.attack = function( attackPower ) {
         image: this.image,
         power: this.power,
         stun: this.stun,
-				gameType: this.extra
+				gameType: this.extra,
+				player: this.player
       });
       throwingWeapon.state.pos.set( pos.get( 0 ) + rnd.get( 0 ), pos.get( 1 ) + rnd.get( 1 ) );
       throwingWeapon.state.vel.set( this.player.orientation * attackPower * 1.2, - 0.16 * attackPower );

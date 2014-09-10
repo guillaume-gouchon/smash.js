@@ -105,10 +105,16 @@
 			vertical-align: middle;
 			@extend .easeTransition;
 		}
+
+		.frags {
+			font-size: 0.7em;
+			display: inline-block;
+			margin-right: 10px;
+		}
 	}
 
 	.invisible {
-		opacity: 0.3;
+		opacity: 0.2;
 	}
 
 	.easeTransition {

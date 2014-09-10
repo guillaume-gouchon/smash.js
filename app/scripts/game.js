@@ -154,8 +154,21 @@ function Game( world ) {
 	  ai.init();
 	};
 
-	this.checkVictory = function() {
+	this.checkVictory = function( dead ) {
 		if ( started ) {
+			// add frags
+			if ( dead.lastHit && dead.lastHit != dead.id ) {
+				var player;
+				for ( var i in players ) {
+					player = players[i];
+					if ( player.id == dead.lastHit ) {
+						player.frags++;
+						gui.updateFrags( player );
+						break;
+					}
+				}
+			}
+
 			if ( world.map.id == Map.Types.STANDARD.id ) {
 				// check if game over
 				var playersAlive = [],
@@ -245,6 +258,9 @@ function Game( world ) {
 				break;
 			case 'item_update':
 				gui.updateItem( data.target );
+				break;
+			case 'frags':
+				gui.updateFrags( data.target );
 				break;
 		}
 	};
