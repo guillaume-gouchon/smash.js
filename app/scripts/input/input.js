@@ -3,7 +3,9 @@ function Input( game, callbacks ) {
 	var KEYS_MAP = {
 		ai: {
 			addPlayer: 107,
-			removePlayer: 109
+			removePlayer: 109,
+			addPlayerBis: 187,
+			removePlayerBis: 189
 		},
 		player1: {
 			addPlayer: 49,
@@ -52,7 +54,7 @@ function Input( game, callbacks ) {
 	// setup keyboard keys
 	$( document ).keydown(function ( event ) {
 		if ( !game.loaded ) return true;
-
+console.log(event.keyCode)
 		switch( event.keyCode ) {
 			case KEYS_MAP.player1.left:
 				keyboardControllers[0].updateAxisState( Controller.Buttons.AXIS_HORIZONTAL, -1 );
@@ -166,6 +168,12 @@ function Input( game, callbacks ) {
 					game.addAIPlayer();
 				break;
 			case KEYS_MAP.ai.removePlayer:
+					game.removeAIPlayer();
+				break;
+			case KEYS_MAP.ai.addPlayerBis:
+					game.addAIPlayer();
+				break;
+			case KEYS_MAP.ai.removePlayerBis:
 					game.removeAIPlayer();
 				break;
 		}
