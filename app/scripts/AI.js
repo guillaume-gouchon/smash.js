@@ -103,9 +103,9 @@ function AI( world ) {
 		var dy = target.obj.state.pos.y - player.state.pos.y;
 
 		if ( Math.abs( dy ) < 60 ) {// on the same platform
-			if ( dy < -20 ) {
+			if ( dy < -35 ) {
 				jump( commands );
-			} else if ( dy > 20 ) {
+			} else if ( dy > 35 ) {
 				// wait to be at the same height
 			} else {
 				if ( dx > 0 && player.orientation == -1 ) {
