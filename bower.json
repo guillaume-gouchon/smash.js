@@ -6,7 +6,7 @@
     "modernizr": "~2.6.2",
     "jquery": "~1.10.2",
     "PhysicsJS": "~0.6.0",
-    "phonepad.js": "latest",
+    "phonepad.js": "2.0.1",
     "pixi.js": "~1.6.1",
     "tween.js": "sole/tween.js"
   }
