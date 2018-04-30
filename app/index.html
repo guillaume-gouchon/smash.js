@@ -2,7 +2,7 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" manifest="smash.appcache"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
 
   <meta charset="utf-8">
@@ -28,10 +28,6 @@
 </head>
 
 <body>
-  <!--[if lt IE 10]>
-  <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
-
   <div id="background">
     <img class="mountains" src="images/bg/mountains.png"/>
 
@@ -41,7 +37,7 @@
       <div class="cloud staticCloud s3"></div>
       <div class="cloud staticCloud s4"></div>
     </div>
-    
+
     <div class="cloud x1"></div>
     <div class="cloud x2"></div>
     <div class="cloud x3"></div>
@@ -53,7 +49,7 @@
 
   <div id="gui">
     <div id="players"></div>
-    
+
     <div id="message" class="hide"></div>
 
     <div id="victory" class="hide">
@@ -131,7 +127,7 @@
     <div id="startGameLayout">
       <button id="startGame">Start Game !</button>
     </div>
-    
+
     <div id="credits">
       <div class="hidden">
         Game and Music by <a href="http://gouchon.com" target="_blank"> Guillaume Gouchon</a><br/>
@@ -177,13 +173,13 @@
   <script src="scripts/input/input.js"></script>
   <script src="scripts/world.js"></script>
   <script src="scripts/map.js"></script>
-  <script src="scripts/AI.js"></script> 
-  <script src="scripts/game.js"></script> 
+  <script src="scripts/AI.js"></script>
+  <script src="scripts/game.js"></script>
   <script src="scripts/gui.js"></script>
   <script src="scripts/main.js"></script>
   <!-- endbuild -->
 
-  <script src="http://pad.gcorp.io/socket.io/socket.io.js"></script>
+  <script src="//pad.gouchon.com/socket.io/socket.io.js"></script>
 
 </body>
 </html>

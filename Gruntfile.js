@@ -312,7 +312,7 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
-            'images/{,*/}*.webp',
+            'images/{,*/}*.*',
             '{,*/}*.html',
             'fonts/{,*/}*.*',
             'sounds/{,*/}*.*',
@@ -355,7 +355,7 @@ module.exports = function (grunt) {
       dist: [
         'compass',
         'copy:styles',
-        'imagemin',
+        // 'imagemin',
         'svgmin'
       ]
     },
@@ -365,10 +365,10 @@ module.exports = function (grunt) {
         auth: {
           host: 'gouchon.com',
           port: 21,
-          authKey: 'key1'
+          authKey: 'key'
         },
         src: '<%= yeoman.dist %>',
-        dest: '/smash',
+        dest: '/home/ftpuser/gouchon.com/smash/',
         exclusions: []
       }
     },
